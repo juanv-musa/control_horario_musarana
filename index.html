@@ -7,9 +7,10 @@
   <meta name="Generator" content="Cocoa HTML Writer">
   <meta name="CocoaVersion" content="2685.4">
   <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #ffffff; color: rgba(255, 255, 255, 0.84); -webkit-text-stroke: rgba(255, 255, 255, 0.84)}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #ffffff; color: rgba(255, 255, 255, 0.84); -webkit-text-stroke: rgba(255, 255, 255, 0.84); min-height: 16.0px}
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: rgba(255, 255, 255, 0.84)}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px 'Helvetica Neue'; color: #ffffff; -webkit-text-stroke: rgba(255, 255, 255, 0.84); min-height: 16.0px}
     span.s1 {font-kerning: none}
+    span.s2 {font: 14.0px 'Apple Color Emoji'; font-kerning: none}
   </style>
 </head>
 <body>
@@ -123,7 +124,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: none !important;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Worker View Styles */</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.clock-display {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>text-align: center;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>padding: 40px;</span></p>
@@ -304,7 +304,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>color: var(--danger);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>/* Admin View Styles */</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>.admin-header {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>display: flex;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>justify-content: space-between;</span></p>
@@ -554,21 +553,19 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>50% { opacity: 0.7; }</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;base target="_blank"&gt;</span></p>
 <p class="p1"><span class="s1">&lt;/head&gt;</span></p>
 <p class="p1"><span class="s1">&lt;body&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;header&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1&gt;🕐 Registro de Jornada&lt;/h1&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h1&gt;</span><span class="s2">🕐</span><span class="s1"> Registro de Jornada&lt;/h1&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p&gt;Cumplimiento Real Decreto-ley 8/2019 - Registro diario de horario&lt;/p&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/header&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="mode-switcher"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="mode-btn active" onclick="switchMode('worker')"&gt;👷 Área Trabajador&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="mode-btn" onclick="switchMode('admin')"&gt;👔 Acceso Administración&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="mode-btn active" onclick="switchMode('worker')"&gt;</span><span class="s2">👷</span><span class="s1"> Área Trabajador&lt;/button&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button class="mode-btn" onclick="switchMode('admin')"&gt;</span><span class="s2">👔</span><span class="s1"> Acceso Administración&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- Worker View --&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="workerView" class="view-section"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="card"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="clock-display"&gt;</span></p>
@@ -579,45 +576,40 @@
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="action-buttons"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="btn btn-primary" id="btnEntrada" onclick="registrarEntrada()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span class="btn-icon"&gt;🚀&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span class="btn-icon"&gt;</span><span class="s2">🚀</span><span class="s1">&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span&gt;Registrar Entrada&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;button class="btn btn-danger" id="btnSalida" onclick="registrarSalida()" disabled&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span class="btn-icon"&gt;🏁&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span class="btn-icon"&gt;</span><span class="s2">🏁</span><span class="s1">&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span&gt;Registrar Salida&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="notes-section"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label for="notas"&gt;📝 Notas / Incidencias (opcional):&lt;/label&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;textarea<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>id="notas"<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>class="notes-input"<span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>placeholder="Ej: Salida urgente médico, visita cliente, incidencia técnica..."</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&gt;&lt;/textarea&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;label for="notas"&gt;</span><span class="s2">📝</span><span class="s1"> Notas / Incidencias (opcional):&lt;/label&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;textarea id="notas" class="notes-input" placeholder="Ej: Salida urgente médico, visita cliente, incidencia técnica..."&gt;&lt;/textarea&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="card history-section"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h3 class="history-title"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>📊 Mi Historial de Hoy</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s2">📊</span><span class="s1"> Mi Historial de Hoy</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;span style="font-size: 0.9rem; color: var(--text-light); font-weight: normal;"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>(Total horas: &lt;strong id="totalHoras"&gt;0h 0m&lt;/strong&gt;)</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/h3&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div id="historialList" class="history-list"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="empty-state"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="empty-state-icon"&gt;📋&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="empty-state-icon"&gt;</span><span class="s2">📋</span><span class="s1">&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;p&gt;No hay registros para hoy&lt;/p&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- Admin View --&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div id="adminView" class="view-section hidden"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="loginSection" class="card login-section"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h2&gt;🔐 Acceso Administración&lt;/h2&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;h2&gt;</span><span class="s2">🔐</span><span class="s1"> Acceso Administración&lt;/h2&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;p style="color: var(--text-light); margin-top: 10px;"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>Modo solo consulta para supervisión y exportación de datos</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/p&gt;</span></p>
@@ -630,7 +622,7 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>Acceder al Panel</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;p style="font-size: 0.85rem; color: var(--text-light);"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>Contraseña por defecto: &lt;code&gt;admin2024&lt;/code&gt; (cámbiala en el código)</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>Contraseña por defecto: &lt;code&gt;admin2024&lt;/code&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/p&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
@@ -638,7 +630,7 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div id="adminPanel" class="hidden"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>&lt;div class="card"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="alert alert-info"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span&gt;ℹ️&lt;/span&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;span&gt;</span><span class="s2">ℹ️</span><span class="s1">&lt;/span&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;strong&gt;Modo Solo Consulta:&lt;/strong&gt; No puedes modificar registros, solo visualizar y exportar datos para cumplimiento legal.</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
@@ -678,10 +670,10 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="export-buttons"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="btn-export btn-pdf" onclick="exportarPDF()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>📄 Exportar PDF</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s2">📄</span><span class="s1"> Exportar PDF</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;button class="btn-export btn-excel" onclick="exportarExcel()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>📊 Exportar Excel</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span></span><span class="s2">📊</span><span class="s1"> Exportar Excel</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/button&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
@@ -699,7 +691,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;/tr&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/thead&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;tbody id="adminTableBody"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                                </span>&lt;!-- Datos se cargan dinámicamente --&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;/tbody&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/table&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
@@ -709,16 +700,13 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Configuración</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const ADMIN_PASSWORD = 'admin2024'; // Cambia esto en producción</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const ADMIN_PASSWORD = 'admin2024';</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Estado</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let currentUser = localStorage.getItem('currentUser') || 'Trabajador 1';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let registros = JSON.parse(localStorage.getItem('registros') || '[]');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let isWorking = localStorage.getItem('isWorking') === 'true';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>let lastEntry = localStorage.getItem('lastEntry') || null;</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Inicialización</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>document.addEventListener('DOMContentLoaded', () =&gt; {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>actualizarReloj();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setInterval(actualizarReloj, 1000);</span></p>
@@ -726,13 +714,11 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cargarHistorial();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cargarFiltros();</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Establecer fechas por defecto (hoy)</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const hoy = new Date().toISOString().split('T')[0];</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('filterDesde').value = hoy;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('filterHasta').value = hoy;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Reloj en tiempo real</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function actualizarReloj() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const ahora = new Date();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('clock').textContent = ahora.toLocaleTimeString('es-ES');</span></p>
@@ -744,7 +730,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Cambiar modo</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function switchMode(mode) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.mode-btn').forEach(btn =&gt; btn.classList.remove('active'));</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>event.target.classList.add('active');</span></p>
@@ -758,7 +743,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Registrar entrada</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function registrarEntrada() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const notas = document.getElementById('notas').value;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const registro = {</span></p>
@@ -781,12 +765,9 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('notas').value = '';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>actualizarEstado();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cargarHistorial();</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Feedback visual</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mostrarNotificacion('✅ Entrada registrada correctamente', 'success');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mostrarNotificacion('</span><span class="s2">✅</span><span class="s1"> Entrada registrada correctamente', 'success');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Registrar salida</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function registrarSalida() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const notas = document.getElementById('notas').value;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const registro = {</span></p>
@@ -809,16 +790,13 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('notas').value = '';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>actualizarEstado();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>cargarHistorial();</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mostrarNotificacion('✅ Salida registrada correctamente', 'success');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>mostrarNotificacion('</span><span class="s2">✅</span><span class="s1"> Salida registrada correctamente', 'success');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Guardar en localStorage</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function guardarRegistros() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>localStorage.setItem('registros', JSON.stringify(registros));</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Actualizar estado de los botones</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function actualizarEstado() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const btnEntrada = document.getElementById('btnEntrada');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const btnSalida = document.getElementById('btnSalida');</span></p>
@@ -827,17 +805,16 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (isWorking) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>btnEntrada.disabled = true;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>btnSalida.disabled = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.textContent = '🔴 Trabajando';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.textContent = '</span><span class="s2">🔴</span><span class="s1"> Trabajando';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.className = 'status-badge status-working pulse';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>btnEntrada.disabled = false;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>btnSalida.disabled = true;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.textContent = '⚪ Fuera de trabajo';</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.textContent = '</span><span class="s2">⚪</span><span class="s1"> Fuera de trabajo';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>status.className = 'status-badge status-out';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Cargar historial del día</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function cargarHistorial() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const hoy = new Date().toDateString();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const registrosHoy = registros.filter(r =&gt;<span class="Apple-converted-space"> </span></span></p>
@@ -849,7 +826,7 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (registrosHoy.length === 0) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>container.innerHTML = `</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="empty-state"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="empty-state-icon"&gt;📋&lt;/div&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="empty-state-icon"&gt;</span><span class="s2">📋</span><span class="s1">&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;p&gt;No hay registros para hoy&lt;/p&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>`;</span></p>
@@ -861,7 +838,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let totalMinutos = 0;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let entradaActual = null;</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Calcular horas (de atrás hacia adelante)</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const registrosOrdenados = [...registrosHoy].sort((a, b) =&gt; a.timestamp - b.timestamp);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>for (let i = 0; i &lt; registrosOrdenados.length; i++) {</span></p>
@@ -874,7 +850,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Si está trabajando, contar hasta ahora</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (isWorking &amp;&amp; lastEntry) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>totalMinutos += (Date.now() - parseInt(lastEntry)) / (1000 * 60);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
@@ -883,7 +858,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const minutos = Math.floor(totalMinutos % 60);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('totalHoras').textContent = `${horas}h ${minutos}m`;</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Mostrar lista</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>registrosHoy.forEach(reg =&gt; {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const hora = new Date(reg.fecha).toLocaleTimeString('es-ES');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const esEntrada = reg.tipo === 'entrada';</span></p>
@@ -891,8 +865,8 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>html += `</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;div class="history-item ${esEntrada ? '' : 'out'}"&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="history-info"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h4&gt;${esEntrada ? '🟢 Entrada' : '🔴 Salida'}&lt;/h4&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>${reg.notas ? `&lt;p&gt;📝 ${reg.notas}&lt;/p&gt;` : ''}</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>&lt;h4&gt;${esEntrada ? '</span><span class="s2">🟢</span><span class="s1"> Entrada' : '</span><span class="s2">🔴</span><span class="s1"> Salida'}&lt;/h4&gt;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                            </span>${reg.notas ? `&lt;p&gt;</span><span class="s2">📝</span><span class="s1"> ${reg.notas}&lt;/p&gt;` : ''}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                        </span>&lt;div class="history-time"&gt;${hora}&lt;/div&gt;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>&lt;/div&gt;</span></p>
@@ -902,7 +876,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>container.innerHTML = html;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Login Admin</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function loginAdmin() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const pass = document.getElementById('adminPass').value;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (pass === ADMIN_PASSWORD) {</span></p>
@@ -910,11 +883,10 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>document.getElementById('adminPanel').classList.remove('hidden');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>filtrarDatos();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>mostrarNotificacion('❌ Contraseña incorrecta', 'error');</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>mostrarNotificacion('</span><span class="s2">❌</span><span class="s1"> Contraseña incorrecta', 'error');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Cargar filtros de empleados</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function cargarFiltros() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const empleados = [...new Set(registros.map(r =&gt; r.empleado))];</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const select = document.getElementById('filterEmpleado');</span></p>
@@ -926,7 +898,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Filtrar datos para admin</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function filtrarDatos() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const empleado = document.getElementById('filterEmpleado').value;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const desde = document.getElementById('filterDesde').value;</span></p>
@@ -934,15 +905,11 @@
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let filtrados = [...registros];</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (empleado) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>filtrados = filtrados.filter(r =&gt; r.empleado === empleado);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (empleado) filtrados = filtrados.filter(r =&gt; r.empleado === empleado);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (desde) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const d = new Date(desde);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>filtrados = filtrados.filter(r =&gt; new Date(r.fecha) &gt;= d);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>if (hasta) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const h = new Date(hasta);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>h.setHours(23, 59, 59);</span></p>
@@ -950,7 +917,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>filtrados.sort((a, b) =&gt; b.timestamp - a.timestamp);</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>renderizarTabla(filtrados);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>actualizarStats(filtrados);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
@@ -967,7 +933,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const fecha = new Date(reg.fecha);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>const esEntrada = reg.tipo === 'entrada';</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>// Calcular duración si es salida</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>let duracion = '-';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (!esEntrada &amp;&amp; reg.entradaRef) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const minutos = (reg.timestamp - reg.entradaRef) / (1000 * 60);</span></p>
@@ -998,14 +963,10 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const hoy = new Date().toDateString();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const registrosHoy = datos.filter(r =&gt; new Date(r.fecha).toDateString() === hoy);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Calcular horas totales</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>let totalMinutos = 0;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const porEmpleado = {};</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>datos.forEach(reg =&gt; {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>if (reg.tipo === 'salida' &amp;&amp; reg.entradaRef) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>const mins = (reg.timestamp - reg.entradaRef) / (1000 * 60);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>totalMinutos += mins;</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">                    </span>totalMinutos += (reg.timestamp - reg.entradaRef) / (1000 * 60);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>}</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
@@ -1014,7 +975,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.getElementById('horasTotales').textContent = Math.floor(totalMinutos / 60) + 'h';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Exportar a PDF</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function exportarPDF() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const { jsPDF } = window.jspdf;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const doc = new jsPDF();</span></p>
@@ -1023,17 +983,14 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const desde = document.getElementById('filterDesde').value || 'Inicio';</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const hasta = document.getElementById('filterHasta').value || 'Hoy';</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Título</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.setFontSize(20);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text('Registro de Jornada Laboral', 14, 20);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Info</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.setFontSize(11);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text(`Empleado: ${empleado}`, 14, 35);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text(`Período: ${desde} - ${hasta}`, 14, 42);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text(`Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}`, 14, 49);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Tabla</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const datos = obtenerDatosFiltrados();</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const tabla = datos.map(reg =&gt; [</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>new Date(reg.fecha).toLocaleDateString('es-ES'),</span></p>
@@ -1051,17 +1008,15 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>headStyles: { fillColor: [37, 99, 235] }</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>});</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>// Leyenda legal</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const finalY = doc.lastAutoTable.finalY + 10;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.setFontSize(9);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.setTextColor(100);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text('Documento generado conforme al Real Decreto-ley 8/2019, de 8 de marzo.', 14, finalY);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text('Registro diario de jornada laboral - Empresa: [Nombre Empresa]', 14, finalY + 5);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.text('Registro diario de jornada laboral', 14, finalY + 5);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>doc.save(`registro-jornada-${new Date().toISOString().split('T')[0]}.pdf`);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Exportar a Excel (CSV)</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function exportarExcel() {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const datos = obtenerDatosFiltrados();</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
@@ -1109,7 +1064,6 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>return filtrados.sort((a, b) =&gt; b.timestamp - a.timestamp);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Notificaciones</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>function mostrarNotificacion(mensaje, tipo) {</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>const div = document.createElement('div');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>div.style.cssText = `</span></p>
@@ -1128,12 +1082,9 @@
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>div.textContent = mensaje;</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>document.body.appendChild(div);</span></p>
 <p class="p2"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">                </span>div.remove();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>}, 3000);</span></p>
+<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>setTimeout(() =&gt; div.remove(), 3000);</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
 <p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>// Agregar animación CSS para notificaciones</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const style = document.createElement('style');</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>style.textContent = `</span></p>
 <p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>@keyframes slideIn {</span></p>
