@@ -83,6 +83,7 @@ export const AuditorDashboard = {
         const selectMonth = document.getElementById('export-filter-month');
         
         if (selectEmployee) {
+            selectEmployee.innerHTML = '<option value="ALL">Todos los Empleados registrados</option>';
             employees.forEach(emp => {
                 const opt = document.createElement('option');
                 opt.value = emp.id;
@@ -91,14 +92,9 @@ export const AuditorDashboard = {
             });
         }
 
-        if (selectMonth) {
-            availableMonths.forEach(m => {
-                const opt = document.createElement('option');
-                opt.value = m;
-                opt.textContent = Store.formatMonthLabel(m);
-                selectMonth.appendChild(opt);
-            });
-            if (availableMonths.length > 0) selectMonth.value = availableMonths[0]; 
+        if (selectMonth && availableMonths.length > 0) {
+            selectMonth.innerHTML = availableMonths.map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
+            selectMonth.value = availableMonths[0];
         }
 
         const applyFilters = async () => {

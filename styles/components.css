@@ -92,9 +92,11 @@
 }
 
 .clock-btn {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
+    width: 160px !important;
+    height: 160px !important;
+    aspect-ratio: 1 / 1 !important;
+    flex-shrink: 0 !important;
+    border-radius: 50% !important;
     border: none;
     font-size: 1.1rem;
     font-weight: 700;
@@ -112,8 +114,8 @@
 
 @media (min-width: 768px) {
     .clock-btn {
-        width: 200px;
-        height: 200px;
+        width: 200px !important;
+        height: 200px !important;
         font-size: 1.5rem;
     }
 }
