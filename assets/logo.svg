@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120" width="100%" height="100%">
+    <defs>
+        <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4F46E5" />
+            <stop offset="100%" stop-color="#4338CA" />
+        </linearGradient>
+        <linearGradient id="secondaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#10B981" />
+            <stop offset="100%" stop-color="#059669" />
+        </linearGradient>
+    </defs>
+    
+    <!-- Logo Icon (Abstract M + Clock shape) -->
+    <g transform="translate(15, 20)">
+        <path d="M 20,70 L 20,20 L 40,50 L 60,20 L 60,70" fill="none" stroke="url(#primaryGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="60" cy="70" r="14" fill="url(#secondaryGrad)" />
+        <path d="M 60,63 L 60,70 L 65,75" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+
+    <!-- Typography -->
+    <text x="110" y="72" font-family="'Inter', -apple-system, sans-serif" font-size="44" font-weight="800" fill="#111827" letter-spacing="-1">MUSARANA</text>
+    <text x="112" y="96" font-family="'Inter', -apple-system, sans-serif" font-size="13" font-weight="600" fill="#6B7280" letter-spacing="3.5">CONTROL DE JORNADA</text>
+</svg>

@@ -1,34 +1,48 @@
-const DEFAULT_USERS = [
-    { id: 1, username: 'empleado', password: '123', role: 'employee', name: 'Juan C. (Empleado)' },
-    { id: 2, username: 'jefe', password: '123', role: 'employer', name: 'Laura Gómez (Gerente)' },
-    { id: 3, username: 'inspector', password: '123', role: 'auditor', name: 'Inspectoría Estatal' }
-];
+// Initialize Supabase client
+const supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
 
 export const Store = {
     // Database initialization
-    init() {
-        if (!localStorage.getItem('timeRecords')) {
-            localStorage.setItem('timeRecords', JSON.stringify([]));
-        }
-        if (!localStorage.getItem('usersDB')) {
-            localStorage.setItem('usersDB', JSON.stringify(DEFAULT_USERS));
+    async init() {
+        // No local init needed anymore, just check session
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            await this.refreshCurrentUser(session.user.id);
         }
     },
 
-    // Auth methods
-    login(username, password) {
-        const users = JSON.parse(localStorage.getItem('usersDB'));
-        const user = users.find(u => u.username === username && u.password === password);
-        if (user) {
-            const safeUser = { ...user };
-            delete safeUser.password;
-            localStorage.setItem('currentUser', JSON.stringify(safeUser));
-            return safeUser;
+    async refreshCurrentUser(userId) {
+        const { data: profile } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .eq('id', userId)
+            .single();
+        
+        if (profile) {
+            localStorage.setItem('currentUser', JSON.stringify(profile));
+            return profile;
         }
         return null;
     },
 
-    logout() {
+    // Auth methods
+    async login(email, password) {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            this.showToast(error.message, 'error');
+            return null;
+        }
+
+        const profile = await this.refreshCurrentUser(data.user.id);
+        return profile;
+    },
+
+    async logout() {
+        await supabaseClient.auth.signOut();
         localStorage.removeItem('currentUser');
     },
 
@@ -38,64 +52,84 @@ export const Store = {
     },
 
     // User Profile
-    updateProfile(userId, newName, newPassword) {
-        const users = JSON.parse(localStorage.getItem('usersDB'));
-        const userIndex = users.findIndex(u => u.id === userId);
-        if (userIndex !== -1) {
-            if (newName) users[userIndex].name = newName;
-            if (newPassword) users[userIndex].password = newPassword;
-            localStorage.setItem('usersDB', JSON.stringify(users));
-            
-            // Update current user session info
-            const current = this.getUser();
-            if (current && current.id === userId) {
-                current.name = users[userIndex].name;
-                localStorage.setItem('currentUser', JSON.stringify(current));
-            }
-            return true;
+    async updateProfile(userId, newName, newPassword) {
+        const { error: profileError } = await supabaseClient
+            .from('profiles')
+            .update({ full_name: newName })
+            .eq('id', userId);
+
+        if (profileError) return false;
+
+        if (newPassword) {
+            const { error: authError } = await supabaseClient.auth.updateUser({
+                password: newPassword
+            });
+            if (authError) return false;
         }
-        return false;
+
+        await this.refreshCurrentUser(userId);
+        return true;
     },
 
     // Admin User CRUD Methods
-    adminGetAllUsers() {
-        return JSON.parse(localStorage.getItem('usersDB')) || [];
+    async adminGetAllUsers() {
+        const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('*');
+        return data || [];
     },
 
-    adminSaveUser(userData) {
-        let users = this.adminGetAllUsers();
+    async adminSaveUser(userData) {
         if (userData.id) {
-            // Update
-            const index = users.findIndex(u => u.id === parseInt(userData.id));
-            if (index !== -1) {
-                const oldPass = users[index].password;
-                users[index] = { ...users[index], ...userData, id: parseInt(userData.id) };
-                if (!userData.password) users[index].password = oldPass;
-            }
+            // Update profile
+            const { error } = await supabaseClient
+                .from('profiles')
+                .update({
+                    full_name: userData.name,
+                    role: userData.role
+                })
+                .eq('id', userData.id);
+            
+            return error ? { success: false, error: error.message } : { success: true };
         } else {
-            // Create
-            if (users.find(u => u.username === userData.username)) {
-                return { success: false, error: 'El usuario ya existe' };
-            }
-            users.push({ ...userData, id: Date.now() });
+            // Create user (Note: In a real app, this should be done via Edge Functions or Admin API)
+            // For this demo, we'll use regular signUp. The user will need to confirm email if not disabled.
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: userData.username,
+                password: userData.password,
+                options: {
+                    data: {
+                        full_name: userData.name,
+                        role: userData.role
+                    }
+                }
+            });
+
+            if (error) return { success: false, error: error.message };
+            
+            // Supabase trigger usually handles profile creation, but if not:
+            await supabaseClient.from('profiles').upsert({
+                id: data.user.id,
+                full_name: userData.name,
+                role: userData.role
+            });
+
+            return { success: true };
         }
-        localStorage.setItem('usersDB', JSON.stringify(users));
-        return { success: true };
     },
 
-    adminDeleteUser(userId) {
-        let users = this.adminGetAllUsers();
-        const me = this.getUser();
-        if (userId === me.id) return { success: false, error: 'No puedes borrarte a ti mismo' };
+    async adminDeleteUser(userId) {
+        // Deleting from Auth requires Admin API. We can "deactivate" in profiles.
+        const { error } = await supabaseClient
+            .from('profiles')
+            .delete()
+            .eq('id', userId);
         
-        users = users.filter(u => u.id !== parseInt(userId));
-        localStorage.setItem('usersDB', JSON.stringify(users));
-        return { success: true };
+        return error ? { success: false, error: error.message } : { success: true };
     },
 
     // Time Tracking Methods
-    getAvailableMonths() {
-        const records = this.getRecords();
+    getAvailableMonths(records) {
         const months = new Set();
         records.forEach(r => {
             const date = new Date(r.timestamp);
@@ -104,12 +138,10 @@ export const Store = {
             months.add(`${yyyy}-${mm}`);
         });
         
-        // Always ensure current month exists
         const now = new Date();
         const currentYYMM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
         months.add(currentYYMM);
         
-        // Sort descending (newest first)
         return Array.from(months).sort((a,b) => b.localeCompare(a));
     },
 
@@ -119,24 +151,30 @@ export const Store = {
         return date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).replace(/^\w/, c => c.toUpperCase());
     },
 
-    calculateMonthlyHours(userId, monthString = null) {
+    async calculateMonthlyHours(userId, monthString = null) {
         let year, month;
         if (monthString) {
             [year, month] = monthString.split('-');
             year = parseInt(year);
-            month = parseInt(month) - 1; // 0-indexed month
+            month = parseInt(month) - 1;
         } else {
             const now = new Date();
             year = now.getFullYear();
             month = now.getMonth();
         }
 
-        const monthRecords = this.getRecords()
-            .filter(r => {
-                const rDate = new Date(r.timestamp);
-                return r.userId == userId && rDate.getMonth() === month && rDate.getFullYear() === year;
-            })
-            .sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+        const startDate = new Date(year, month, 1).toISOString();
+        const endDate = new Date(year, month + 1, 0, 23, 59, 59).toISOString();
+
+        const { data: monthRecords } = await supabaseClient
+            .from('time_records')
+            .select('*')
+            .eq('user_id', userId)
+            .gte('timestamp', startDate)
+            .lte('timestamp', endDate)
+            .order('timestamp', { ascending: true });
+
+        if (!monthRecords) return 0;
 
         let totalMs = 0;
         let lastIn = null;
@@ -149,8 +187,6 @@ export const Store = {
                 lastIn = null;
             }
         }
-        
-        // Return accumulated milliseconds (ignores currently open shift until OUT is registered)
         return totalMs;
     },
 
@@ -162,117 +198,65 @@ export const Store = {
         return `${hours}h ${minutes}m`;
     },
 
-    getRecords() {
-        return JSON.parse(localStorage.getItem('timeRecords')) || [];
-    },
-
-    saveRecord(record) {
-        const records = this.getRecords();
-        records.push({ ...record, id: Date.now() });
-        localStorage.setItem('timeRecords', JSON.stringify(records));
-        return records;
-    },
-
-    // A worker clocking in/out
-    clockAction(userId, type, notes = '') {
-        // type: 'IN' or 'OUT'
-        const users = JSON.parse(localStorage.getItem('usersDB'));
-        const user = users.find(u => u.id === userId);
-        const record = {
-            userId,
-            userName: user.name,
-            type,
-            timestamp: new Date().toISOString(),
-            notes: notes.trim()
-        };
-        this.saveRecord(record);
-        return record;
-    },
-
-    exportEmployeeCSV(empId, monthId) {
-        let allRecords = this.getRecords().sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
-        let currentRecords = allRecords;
-        let filename = `auditoria_MUSARANA`;
-        const employees = this.adminGetAllUsers();
-
-        if (empId !== 'ALL') {
-            currentRecords = currentRecords.filter(r => r.userId == empId);
-            const empName = employees.find(e => e.id == empId)?.name.replace(/\s+/g, '_') || empId;
-            filename += `_${empName}`;
-        } else {
-            filename += `_Global`;
+    async getRecords(filters = {}) {
+        let query = supabaseClient.from('time_records').select('*');
+        
+        if (filters.userId && filters.userId !== 'ALL') query = query.eq('user_id', filters.userId);
+        if (filters.month) {
+            const [year, month] = filters.month.split('-');
+            const startDate = new Date(year, month - 1, 1).toISOString();
+            const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+            query = query.gte('timestamp', startDate).lte('timestamp', endDate);
         }
 
-        if (monthId !== 'ALL') {
-            const [year, month] = monthId.split('-');
-            currentRecords = currentRecords.filter(r => {
-                const d = new Date(r.timestamp);
-                return d.getFullYear() === parseInt(year) && d.getMonth() === (parseInt(month) - 1);
-            });
-            filename += `_${monthId}`;
-        } else {
-            filename += `_HistoricoCompleto`;
-        }
-
-        filename += '.csv';
-
-        if (currentRecords.length === 0) {
-            this.showToast('No hay registros para exportar en el periodo seleccionado', 'error');
-            return false;
-        }
-
-        this.showToast('Generando archivo de firmas...', 'info');
-
-        const headers = ["UUID", "Empleado", "Marca de Tiempo (ISO)", "Tipo Acción", "Observaciones"];
-        const csvRows = [headers.join(',')];
-        
-        currentRecords.forEach(r => {
-            const hash = `${r.id.toString(16).toUpperCase()}-${r.userId}F`;
-            const escapedName = `"${r.userName.replace(/"/g, '""')}"`;
-            const typeES = r.type === 'IN' ? 'ENTRADA' : 'SALIDA';
-            const safeNotes = r.notes ? `"${r.notes.replace(/"/g, '""')}"` : '""';
-            csvRows.push([hash, escapedName, r.timestamp, typeES, safeNotes].join(','));
-        });
-
-        // APENDICE LEGAL: SUMATORIO Y FIRMAS
-        if (empId !== 'ALL' && monthId !== 'ALL') {
-            const totalFormatted = this.formatTime(this.calculateMonthlyHours(empId, monthId));
-            csvRows.push(`,,,`);
-            csvRows.push(`"TOTAL COMPUTADO (${this.formatMonthLabel(monthId).toUpperCase()})","","","${totalFormatted}"`);
-            
-            csvRows.push(`,,,`);
-            csvRows.push(`"Firma de la Empresa:","_______________________","","Firma del Trabajador:","_______________________"`);
-            csvRows.push(`"Sello o representante","","","Conforme",""`);
-            csvRows.push(`"A día ___ de _________________ de 20___","","","",""`);
-        }
-
-        const csvString = "\ufeff" + csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        
-        setTimeout(() => {
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            this.showToast(`Descargado: ${filename}`, 'success');
-        }, 500);
-
-        return true;
+        const { data, error } = await query.order('timestamp', { ascending: false });
+        return data || [];
     },
 
-    // Get current status for a specific employee
-    getEmployeeStatus(userId) {
-        const records = this.getRecords().filter(r => r.userId === userId);
-        if (records.length === 0) return 'OUT';
+    async clockAction(userId, type, notes = '') {
+        const user = this.getUser();
+        const { data, error } = await supabaseClient
+            .from('time_records')
+            .insert({
+                user_id: userId,
+                user_name: user.full_name,
+                type,
+                notes: notes.trim()
+            })
+            .select()
+            .single();
         
-        // Sort by newest first
-        records.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-        return records[0].type; // 'IN' or 'OUT'
+        return data;
+    },
+
+    async getEmployeeStatus(userId) {
+        const { data } = await supabaseClient
+            .from('time_records')
+            .select('type')
+            .eq('user_id', userId)
+            .order('timestamp', { ascending: false })
+            .limit(1)
+            .single();
+        
+        return data ? data.type : 'OUT';
+    },
+
+    async validateMonth(userId, monthYear) {
+        const [year, month] = monthYear.split('-');
+        const startDate = new Date(year, month - 1, 1).toISOString();
+        const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+
+        const { error } = await supabaseClient
+            .from('time_records')
+            .update({ 
+                is_validated: true, 
+                validation_date: new Date().toISOString() 
+            })
+            .eq('user_id', userId)
+            .gte('timestamp', startDate)
+            .lte('timestamp', endDate);
+        
+        return !error;
     },
 
     // Notifications (Toast)
@@ -291,8 +275,52 @@ export const Store = {
         setTimeout(() => {
             if (toast.parentElement) toast.remove();
         }, 3000);
+    },
+
+    async exportEmployeeCSV(empId, monthId) {
+        const records = await this.getRecords({ userId: empId, month: monthId === 'ALL' ? null : monthId });
+        const users = await this.adminGetAllUsers();
+        
+        let filename = `auditoria_MUSARANA`;
+        if (empId !== 'ALL') {
+            const empName = users.find(u => u.id === empId)?.full_name.replace(/\s+/g, '_') || empId;
+            filename += `_${empName}`;
+        }
+        filename += `_${monthId}.csv`;
+
+        if (records.length === 0) {
+            this.showToast('No hay registros para exportar', 'error');
+            return;
+        }
+
+        const headers = ["UUID", "Empleado", "Marca de Tiempo", "Tipo", "Observaciones", "Validado"];
+        const csvRows = [headers.join(',')];
+        
+        records.forEach(r => {
+            csvRows.push([
+                r.id,
+                `"${r.user_name}"`,
+                r.timestamp,
+                r.type,
+                `"${r.notes || ''}"`,
+                r.is_validated ? 'SI' : 'NO'
+            ].join(','));
+        });
+
+        if (empId !== 'ALL' && monthId !== 'ALL') {
+            const hours = await this.calculateMonthlyHours(empId, monthId);
+            csvRows.push('');
+            csvRows.push(`"TOTAL HORAS","${this.formatTime(hours)}"`);
+            csvRows.push(`"Certificado de conformidad digital","${records[0].is_validated ? 'VALIDADO POR EMPLEADO' : 'PENDIENTE'}"`);
+        }
+
+        const blob = new Blob(["\ufeff" + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
     }
 };
 
-// Initialize on load
 Store.init();

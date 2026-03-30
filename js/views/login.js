@@ -9,8 +9,8 @@ export const LoginView = {
                     <img src="assets/logo.png" alt="MUSARANA Logo" style="height: 50px; margin-bottom: 2rem;">
                     <form id="login-form">
                         <div class="form-group">
-                            <label class="form-label" for="username">Usuario</label>
-                            <input type="text" id="username" class="form-control" placeholder="ej. empleado o jefe" required>
+                            <label class="form-label" for="email">Correo Electrónico</label>
+                            <input type="email" id="email" class="form-control" placeholder="tu@email.com" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="password">Contraseña</label>
@@ -27,19 +27,17 @@ export const LoginView = {
         const form = document.getElementById('login-form');
         if (!form) return;
         
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const uname = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             
-            const user = Store.login(uname, pass);
+            const user = await Store.login(email, pass);
             if (user) {
-                Store.showToast(`Bienvenido ${user.name}`);
+                Store.showToast(`Bienvenido ${user.full_name}`);
                 if (user.role === 'employee') Router.navigate('/employee');
                 else if (user.role === 'employer') Router.navigate('/employer');
                 else if (user.role === 'auditor') Router.navigate('/auditor');
-            } else {
-                Store.showToast('Credenciales incorrectas', 'error');
             }
         });
     }

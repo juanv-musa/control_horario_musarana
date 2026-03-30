@@ -15,7 +15,7 @@ export const Router = {
     },
 
     navigate(path) {
-        window.history.pushState({}, path, window.location.origin + '#' + path);
+        window.location.hash = path;
         this.render();
     },
 
