@@ -42,7 +42,12 @@ export const LoginView = {
                             <button id="btn-hide-audit" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">&larr; Volver al acceso de personal</button>
                         </div>
                     </div>
+                    </div>
                 </div>
+
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; margin-top: 1rem;">
+                    <p>Musaraña &copy; 2026</p>
+                </footer>
             </div>
         `;
     },

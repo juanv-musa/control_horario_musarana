@@ -68,8 +68,7 @@ export const AuditorDashboard = {
                 </div>
 
                 <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
-                    <p><b>Musaraña Inspección</b> &copy; 2026</p>
-                    <a href="#/manual" style="color: var(--danger); text-decoration: none; font-weight: 600;">📖 Manual</a>
+                    <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>
         `;

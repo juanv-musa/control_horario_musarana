@@ -82,9 +82,8 @@ export const EmployeeDashboard = {
                     </div>
                 </div>
                 
-                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem;">
-                    <p><b>Musaraña Registro Laboral</b> &copy; 2026</p>
-                    <a href="#/manual" style="color: var(--primary); text-decoration: none; font-weight: 600;">📖 Ver Manual de Usuario</a>
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
+                    <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>
         `;
@@ -110,8 +109,8 @@ export const EmployeeDashboard = {
         
         let timerInterval = null;
 
-        const updateUI = async () => {
-            const currentStatus = await Store.getEmployeeStatus(user.id);
+        const updateUI = async (forcedStatus = null) => {
+            const currentStatus = forcedStatus || await Store.getEmployeeStatus(user.id);
             const isWorking = (currentStatus === 'IN');
 
             if (timerInterval) clearInterval(timerInterval);
@@ -123,8 +122,6 @@ export const EmployeeDashboard = {
                 statusContainer.innerHTML = '<span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● TRABAJANDO</span>';
                 
                 timerDisplay.style.display = 'block';
-                // To get actual start time, we need the record. Let's do a one-off fetch for the last IN record if needed.
-                // For simplicity, we just keep the timer for current session.
                 const { data: lastIn } = await supabaseClient.from('time_records').select('timestamp').eq('user_id', user.id).eq('type', 'IN').order('timestamp', { ascending: false }).limit(1).single();
                 
                 if (lastIn) {
@@ -155,11 +152,13 @@ export const EmployeeDashboard = {
             const action = currentStatus === 'IN' ? 'OUT' : 'IN';
             const notes = notesInput.value;
             
+            // UI Update first (Optimistic)
+            await updateUI(action);
+            
             await Store.clockAction(user.id, action, notes);
             notesInput.value = '';
             Store.showToast(action === 'IN' ? 'Entrada registrada' : 'Salida registrada', 'success');
             
-            await updateUI();
             await this.initHistory();
             await this.initValidation();
             btnClock.disabled = false;
