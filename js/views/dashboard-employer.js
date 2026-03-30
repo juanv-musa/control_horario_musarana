@@ -76,8 +76,8 @@ export const EmployerDashboard = {
                                     <tr>
                                         <th>Nombre Completo</th>
                                         <th>Horas (Periodo)</th>
-                                        <th>Estado Firma</th>
-                                        <th>Rol</th>
+                                        <th>Firma Empleado</th>
+                                        <th>Firma Empresa</th>
                                         <th style="text-align: right;">Acciones</th>
                                     </tr>
                                 </thead>
@@ -208,6 +208,10 @@ export const EmployerDashboard = {
             toggleBtn.addEventListener('click', () => {
                 userForm.reset();
                 document.getElementById('nu-id').value = '';
+                // Restore visibility in case it was hidden by an edit
+                document.getElementById('nu-username').parentElement.style.display = 'block';
+                document.getElementById('nu-password').parentElement.style.display = 'block';
+                
                 document.getElementById('new-user-title').textContent = 'Alta de Usuario';
                 formContainer.style.display = 'block';
                 toggleBtn.style.display = 'none';
@@ -332,15 +336,23 @@ export const EmployerDashboard = {
                     <td style="font-family: monospace; font-weight: 700; color: var(--text-primary);">${Store.formatTime(hours)}</td>
                     <td>
                         <span class="badge ${isEmployeeSigned ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.75rem;">
-                            ${isEmployeeSigned ? 'FIRMADO' : (periodRecords.length > 0 ? 'PENDIENTE' : 'SIN DATOS')}
+                            ${isEmployeeSigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente de revisión' : 'SIN DATOS')}
                         </span>
                     </td>
                     <td>
                         <span class="badge ${isCompanySigned ? 'badge-info' : 'badge-inactive'}" style="font-size: 0.75rem;">
-                            ${isCompanySigned ? 'FIRMADO' : (periodRecords.length > 0 ? 'PENDIENTE' : 'SIN DATOS')}
+                            ${isCompanySigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente de revisión' : 'SIN DATOS')}
                         </span>
                     </td>
-                    <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                    <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
+                        <button class="btn-edit-user" 
+                                data-id="${u.id}" 
+                                data-name="${u.full_name}" 
+                                data-username="${u.username || ''}" 
+                                data-role="${u.role}" 
+                                style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.25rem;" 
+                                title="Editar nombre o rol">✏️</button>
+                        
                         ${isEmployeeSigned && !isCompanySigned ? 
                             `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white;">✍️ Firma Empresa</button>` : ''
                         }
@@ -366,6 +378,28 @@ export const EmployerDashboard = {
                         await this.renderUsers(tMonth);
                     }
                 }
+            };
+        });
+
+        // Attach Edit
+        document.querySelectorAll('.btn-edit-user').forEach(btn => {
+            btn.onclick = (e) => {
+                const id = btn.getAttribute('data-id');
+                const name = btn.getAttribute('data-name');
+                const role = btn.getAttribute('data-role');
+                
+                document.getElementById('nu-id').value = id;
+                document.getElementById('nu-name').value = name;
+                document.getElementById('nu-role').value = role;
+                
+                // Email and password cannot be edited for others via regular SDK
+                document.getElementById('nu-username').parentElement.style.display = 'none';
+                document.getElementById('nu-password').parentElement.style.display = 'none';
+                
+                document.getElementById('new-user-title').textContent = 'Editar Usuario';
+                document.getElementById('new-user-form-container').style.display = 'block';
+                document.getElementById('btn-toggle-new-user').style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             };
         });
 

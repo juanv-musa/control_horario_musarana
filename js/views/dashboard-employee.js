@@ -129,12 +129,19 @@ export const EmployeeDashboard = {
                 // Check validation status from records in that period
                 const periodRecords = await Store.getRecords({ userId: user.id, month: selectedMonth });
                 const isSigned = periodRecords.length > 0 && periodRecords.every(r => r.is_validated);
+                const isCompanySigned = periodRecords.length > 0 && periodRecords.every(r => r.is_company_validated);
 
                 if (isSigned) {
                     signatureContainer.innerHTML = `
-                        <div style="background: #ECFDF5; border: 1px solid #10B981; color: #065F46; padding: 1rem; border-radius: var(--radius-sm); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Certificado el ${new Date(periodRecords[0].validation_date).toLocaleDateString()}
+                        <div style="margin-bottom: 1rem;">
+                            <div style="background: #ECFDF5; border: 1px solid #10B981; color: #065F46; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <b>Tu Firma:</b> Validado el ${new Date(periodRecords[0].validation_date).toLocaleDateString()}
+                            </div>
+                            <div style="background: ${isCompanySigned ? '#EEF2FF' : '#FFF7ED'}; border: 1px solid ${isCompanySigned ? '#6366F1' : '#F97316'}; color: ${isCompanySigned ? '#3730A3' : '#9A3412'}; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <b>Firma Empresa:</b> ${isCompanySigned ? `Validado el ${new Date(periodRecords[0].company_validation_date).toLocaleDateString()}` : 'Pendiente de revisión'}
+                            </div>
                         </div>
                     `;
                 } else if (periodRecords.length > 0) {

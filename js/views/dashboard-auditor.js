@@ -120,13 +120,13 @@ export const AuditorDashboard = {
                         <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
                         <td>
                             ${r.is_validated 
-                                ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE</span>'}
+                                ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente de revisión</span>'}
                         </td>
                         <td>
                             ${r.is_company_validated 
-                                ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE</span>'}
+                                ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente de revisión</span>'}
                         </td>
                     </tr>
                 `}).join('');
