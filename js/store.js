@@ -352,7 +352,7 @@ export const Store = {
         const records = await this.getRecords({ userId: empId, month: monthId === 'ALL' ? null : monthId });
         const users = await this.adminGetAllUsers();
         
-        let filename = `auditoria_MUSARANA`;
+        let filename = `auditoria_MUSARAÑA`;
         if (empId !== 'ALL') {
             const empName = users.find(u => u.id === empId)?.full_name.replace(/\s+/g, '_') || empId;
             filename += `_${empName}`;
@@ -364,7 +364,7 @@ export const Store = {
             return;
         }
 
-        const headers = ["UUID", "Empleado", "Marca de Tiempo", "Tipo", "Observaciones", "Firma Empleado", "Firma Empresa"];
+        const headers = ["ID Registro", "Empleado", "Marca de Tiempo (ISO)", "Tipo", "Observaciones", "Firma Empleado", "Firma Empresa"];
         const csvRows = [headers.join(',')];
         
         records.forEach(r => {
@@ -379,12 +379,28 @@ export const Store = {
             ].join(','));
         });
 
+        // Add Legal Summary at the end for single-employee/month exports
         if (empId !== 'ALL' && monthId !== 'ALL') {
             const hours = await this.calculateMonthlyHours(empId, monthId);
+            const firstRec = records[0];
+            
             csvRows.push('');
-            csvRows.push(`"TOTAL HORAS","${this.formatTime(hours)}"`);
-            csvRows.push(`"Certificación Empleado","${records[0].is_validated ? 'VALIDADO POR EMPLEADO ('+new Date(records[0].validation_date).toLocaleDateString()+')' : 'PENDIENTE'}"`);
-            csvRows.push(`"Certificación Empresa","${records[0].is_company_validated ? 'VALIDADO POR EMPRESA ('+new Date(records[0].company_validation_date).toLocaleDateString()+')' : 'PENDIENTE'}"`);
+            csvRows.push('--- RESUMEN LEGAL DE AUDITORÍA ---');
+            csvRows.push(`"TOTAL HORAS TRABAJADAS (PERIODO)","${this.formatTime(hours)}"`);
+            
+            const empCert = firstRec.is_validated 
+                ? `VALIDADO POR EMPLEADO EL ${new Date(firstRec.validation_date).toLocaleString('es-ES')}`
+                : 'PENDIENTE DE VALIDACIÓN POR EMPLEADO';
+            csvRows.push(`"Certificación Empleado","${empCert}"`);
+            
+            const compCert = firstRec.is_company_validated
+                ? `VALIDADO POR EMPRESA EL ${new Date(firstRec.company_validation_date).toLocaleString('es-ES')}`
+                : 'PENDIENTE DE REVISIÓN EMPRESARIAL';
+            csvRows.push(`"Certificación Empresa","${compCert}"`);
+            
+            csvRows.push('');
+            csvRows.push(`"Generado por","${this.getUser()?.full_name || 'Sistema'}"`);
+            csvRows.push(`"Fecha de Reporte","${new Date().toLocaleString('es-ES')}"`);
         }
 
         const blob = new Blob(["\ufeff" + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -393,6 +409,8 @@ export const Store = {
         link.href = url;
         link.download = filename;
         link.click();
+        
+        this.showToast('Reporte generado correctamente');
     }
 };
 

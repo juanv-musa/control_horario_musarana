@@ -5,13 +5,16 @@ import { LoginView } from './views/login.js';
 import { EmployeeDashboard } from './views/dashboard-employee.js';
 import { EmployerDashboard } from './views/dashboard-employer.js';
 import { AuditorDashboard } from './views/dashboard-auditor.js';
+import { ManualView } from './views/manual-view.js';
 
 export const Router = {
     routes: {
         '/': LoginView,
+        '/login': LoginView,
         '/employee': EmployeeDashboard,
         '/employer': EmployerDashboard,
         '/auditor': AuditorDashboard,
+        '/manual': ManualView
     },
 
     navigate(path) {

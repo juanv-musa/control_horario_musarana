@@ -1,11 +1,10 @@
 import { Store } from '../store.js';
-import { Router } from '../router.js';
 
 export const EmployeeDashboard = {
     render() {
         const user = Store.getUser();
         return `
-            <div style="width: 100%;">
+            <div style="width: 100%; min-height: 100vh; background: #f9fafb;">
                 <nav class="navbar">
                     <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
                     <div class="user-info">
@@ -14,254 +13,236 @@ export const EmployeeDashboard = {
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
                     </div>
                 </nav>
+
+                <div class="container py-4">
+                    <div class="row">
+                        <!-- Main Action Column -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="glass-panel text-center" style="padding: 3rem 2rem;">
+                                <div id="status-badge-container" style="margin-bottom: 2rem;">
+                                    <!-- Filled by init -->
+                                </div>
+                                
+                                <div id="timer-display" style="display: none; margin-bottom: 2rem; font-family: monospace; font-size: 2.5rem; font-weight: 700; color: var(--primary);">
+                                    00:00:00
+                                </div>
+
+                                <button id="btn-clock-action" class="clock-btn">
+                                    <div id="btn-icon"></div>
+                                    <span id="btn-text">Cargando...</span>
+                                </button>
+                                
+                                <div class="form-group mt-4" style="max-width: 300px; margin-left: auto; margin-right: auto;">
+                                    <input type="text" id="record-notes" class="form-control" placeholder="Añadir nota (opcional)..." style="text-align: center;">
+                                </div>
                             </div>
                         </div>
 
-                        <div style="max-width: 500px; margin: 0 auto 3rem auto; text-align: center;">
-                            <p class="mb-6">Registra tu entrada o salida. Puedes añadir una breve observación si es necesario.</p>
-                            <div class="mb-4">
-                                <input type="text" id="record-notes" class="form-control" placeholder="Observaciones (ej. Visita cliente, médico...)" style="background: white; border: 1px solid var(--border);">
+                        <!-- History Column -->
+                        <div class="col-lg-6">
+                            <div class="glass-panel" style="margin-bottom: 2rem;">
+                                <h3 style="margin-top: 0;">📊 Histórico y Validación</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Periodo a Consultar</label>
+                                    <select id="employee-month-filter" class="form-control">
+                                        <!-- Filled by init -->
+                                    </select>
+                                </div>
+
+                                <div id="validation-panel" style="display: none;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f3f4f6; border-radius: var(--radius-sm); margin: 1.5rem 0;">
+                                        <span>Total Horas Mes:</span>
+                                        <strong id="history-total-hours" style="font-size: 1.25rem; color: var(--primary);">00:00</strong>
+                                    </div>
+
+                                    <div id="signature-container">
+                                        <!-- Filled by updatePeriod -->
+                                    </div>
+                                </div>
                             </div>
-                            <div class="clock-btn-container" id="btn-container">
-                                <div class="loader"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="responsive-grid">
-                            <div>
-                                <h3 class="mb-4">📋 Movimientos Recientes</h3>
-                                <div class="table-container" style="background: white;">
+
+                            <div class="glass-panel">
+                                <h3 style="margin-top: 0; font-size: 1rem;">🕒 Movimientos Recientes</h3>
+                                <div class="table-container">
                                     <table class="table" id="personal-records">
                                         <thead>
                                             <tr>
                                                 <th>Fecha/Hora</th>
-                                                <th>Acción</th>
+                                                <th>Tipo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr><td colspan="2" class="text-center">Cargando...</td></tr>
+                                            <!-- Filled by renderHistory -->
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            
-                            <div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                                    <h3 style="margin: 0;">📊 Histórico y Validación</h3>
-                                </div>
-                                <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
-                                    <label class="form-label">Seleccionar Mes</label>
-                                    <select id="employee-month-filter" class="form-control mb-4" style="background: var(--bg-page);">
-                                        <!-- Filled dynamically -->
-                                    </select>
-                                    
-                                    <div id="validation-panel" style="display: none;">
-                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;">TOTAL DEL PERIODO</div>
-                                        <div id="employee-history-result" style="font-size: 1.75rem; font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">0h 0m</div>
-                                        
-                                        <div id="signature-status-container">
-                                            <!-- Status or Button -->
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);">
-                            <h3 class="mb-4">⚙️ Mi Perfil</h3>
-                            <form id="profile-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                <div class="form-group">
-                                    <label class="form-label">Nombre Completo</label>
-                                    <input type="text" id="profile-name" class="form-control" value="${user.full_name}" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Nueva Contraseña</label>
-                                    <input type="password" id="profile-password" class="form-control" placeholder="Dejar vacío para no cambiar">
-                                </div>
-                                <div style="grid-column: 1 / -1; text-align: right;">
-                                    <button type="submit" class="btn btn-primary">Actualizar Datos</button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
+                
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem;">
+                    <p><b>Musaraña Registro Laboral</b> &copy; 2026</p>
+                    <a href="#/manual" style="color: var(--primary); text-decoration: none; font-weight: 600;">📖 Ver Manual de Usuario</a>
+                </footer>
             </div>
         `;
     },
 
     async init() {
-        await this.renderStatus();
-        await this.renderHistory();
-        await this.initCompliance();
-        this.initProfileForm();
+        const user = Store.getUser();
+        if (!user) return;
+
+        await this.initClockAction();
+        await this.initHistory();
+        await this.initValidation();
     },
 
-    async initCompliance() {
+    async initClockAction() {
+        const user = Store.getUser();
+        const btnClock = document.getElementById('btn-clock-action');
+        const btnText = document.getElementById('btn-text');
+        const btnIcon = document.getElementById('btn-icon');
+        const statusContainer = document.getElementById('status-badge-container');
+        const timerDisplay = document.getElementById('timer-display');
+        const notesInput = document.getElementById('record-notes');
+        
+        let timerInterval = null;
+
+        const updateUI = async () => {
+            const statusRecord = await Store.getEmployeeStatus(user.id);
+            const isWorking = statusRecord.type === 'IN';
+
+            if (timerInterval) clearInterval(timerInterval);
+
+            if (isWorking) {
+                btnClock.className = 'clock-btn clock-out';
+                btnText.textContent = 'FICHAR SALIDA';
+                btnIcon.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12"/></svg>';
+                statusContainer.innerHTML = '<span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● TRABAJANDO</span>';
+                
+                timerDisplay.style.display = 'block';
+                const startTime = new Date(statusRecord.timestamp);
+                const startTimer = () => {
+                    const now = new Date();
+                    const diff = now - startTime;
+                    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                    timerDisplay.textContent = `${h}:${m}:${s}`;
+                };
+                startTimer();
+                timerInterval = setInterval(startTimer, 1000);
+            } else {
+                btnClock.className = 'clock-btn clock-in';
+                btnText.textContent = 'FICHAR ENTRADA';
+                btnIcon.innerHTML = '<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>';
+                statusContainer.innerHTML = '<span class="badge badge-inactive" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● FUERA DE JORNADA</span>';
+                timerDisplay.style.display = 'none';
+            }
+        };
+
+        btnClock.onclick = async () => {
+            btnClock.disabled = true;
+            const statusRecord = await Store.getEmployeeStatus(user.id);
+            const action = statusRecord.type === 'IN' ? 'OUT' : 'IN';
+            const notes = notesInput.value;
+            
+            await Store.clockAction(user.id, action, notes);
+            notesInput.value = '';
+            Store.showToast(action === 'IN' ? 'Entrada registrada' : 'Salida registrada', 'success');
+            
+            await updateUI();
+            await this.initHistory();
+            await this.initValidation();
+            btnClock.disabled = false;
+        };
+
+        await updateUI();
+    },
+
+    async initHistory() {
+        const user = Store.getUser();
+        const records = await Store.getRecords({ userId: user.id });
+        const tbody = document.querySelector('#personal-records tbody');
+        if (!tbody) return;
+
+        const recent = records.slice(0, 5);
+        if (recent.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-secondary">No hay movimientos.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = recent.map(r => `
+            <tr>
+                <td style="font-size: 0.85rem; font-family: monospace;">
+                    ${new Date(r.timestamp).toLocaleString('es-ES')}
+                </td>
+                <td>
+                    <span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span>
+                </td>
+            </tr>
+        `).join('');
+    },
+
+    async initValidation() {
         const user = Store.getUser();
         const monthFilter = document.getElementById('employee-month-filter');
         const validationPanel = document.getElementById('validation-panel');
-        const historyResult = document.getElementById('employee-history-result');
-        const signatureContainer = document.getElementById('signature-status-container');
+        const hoursDisplay = document.getElementById('history-total-hours');
+        const signatureContainer = document.getElementById('signature-container');
 
         if (!monthFilter) return;
 
-        // Fetch records once to get available months
         const records = await Store.getRecords({ userId: user.id });
         const months = Store.getAvailableMonths(records);
-        
+
         if (months.length > 0) {
             monthFilter.innerHTML = months.map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
             
             const updatePeriod = async () => {
                 const selectedMonth = monthFilter.value;
                 const hours = await Store.calculateMonthlyHours(user.id, selectedMonth);
-                historyResult.textContent = Store.formatTime(hours);
+                hoursDisplay.textContent = Store.formatTime(hours);
                 validationPanel.style.display = 'block';
 
-                // Check validation status from records in that period
                 const periodRecords = await Store.getRecords({ userId: user.id, month: selectedMonth });
                 const isSigned = periodRecords.length > 0 && periodRecords.every(r => r.is_validated);
                 const isCompanySigned = periodRecords.length > 0 && periodRecords.every(r => r.is_company_validated);
 
                 if (isSigned) {
                     signatureContainer.innerHTML = `
-                        <div style="margin-bottom: 1rem;">
-                            <div style="background: #ECFDF5; border: 1px solid #10B981; color: #065F46; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                                <b>Tu Firma:</b> Validado el ${new Date(periodRecords[0].validation_date).toLocaleDateString()}
+                        <div style="margin-top: 1rem;">
+                            <div style="background: #ECFDF5; border: 1px solid #10B981; color: #065F46; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                <b>Tu Firma:</b> Validado ${new Date(periodRecords[0].validation_date).toLocaleDateString()}
                             </div>
-                            <div style="background: ${isCompanySigned ? '#EEF2FF' : '#FFF7ED'}; border: 1px solid ${isCompanySigned ? '#6366F1' : '#F97316'}; color: ${isCompanySigned ? '#3730A3' : '#9A3412'}; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                                <b>Firma Empresa:</b> ${isCompanySigned ? `Validado el ${new Date(periodRecords[0].company_validation_date).toLocaleDateString()}` : 'Pendiente de revisión'}
+                            <div style="background: ${isCompanySigned ? '#EEF2FF' : '#FFF7ED'}; border: 1px solid ${isCompanySigned ? '#6366F1' : '#F97316'}; color: ${isCompanySigned ? '#3730A3' : '#9A3412'}; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                                <b>Firma Empresa:</b> ${isCompanySigned ? 'Validado' : 'Pendiente revisión'}
                             </div>
                         </div>
                     `;
                 } else if (periodRecords.length > 0) {
                     signatureContainer.innerHTML = `
-                        <button class="btn btn-block" id="btn-sign-compliance" style="background: var(--text-primary); color: white; margin-top: 1rem;">
-                            Confirmar y Firmar Mes
-                        </button>
-                        <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem; text-align: center;">
-                            Al firmar, confirmas que los registros arriba mostrados son correctos conforme al Art. 34.9 ET.
-                        </p>
+                        <button class="btn btn-primary btn-block" id="btn-sign-month" style="margin-top: 1.5rem;">✍️ Confirmar y Firmar Mes</button>
+                        <p style="font-size: 0.7rem; color: var(--text-secondary); text-align: center; margin-top: 0.5rem;">Conforme al Art. 34.9 ET.</p>
                     `;
-                    
-                    document.getElementById('btn-sign-compliance').addEventListener('click', async (e) => {
-                        const btn = e.target;
-                        btn.disabled = true;
-                        btn.innerHTML = '<span class="loader-sm"></span> Procesando...';
-                        
+                    document.getElementById('btn-sign-month').onclick = async () => {
                         const success = await Store.validateMonth(user.id, selectedMonth);
                         if (success) {
-                            Store.showToast('Mes validado correctamente', 'success');
+                            Store.showToast('Mes firmado correctamente', 'success');
                             updatePeriod();
-                        } else {
-                            Store.showToast('Error al validar', 'error');
-                            btn.disabled = false;
                         }
-                    });
-                } else {
-                    signatureContainer.innerHTML = '<p class="text-secondary" style="font-size: 0.9rem;">Sin registros en este periodo.</p>';
+                    };
                 }
             };
 
-            monthFilter.addEventListener('change', updatePeriod);
+            monthFilter.onchange = updatePeriod;
             await updatePeriod();
         } else {
-            monthFilter.innerHTML = '<option value="">Sin datos</option>';
-        }
-    },
-
-    async renderStatus() {
-        const user = Store.getUser();
-        const status = await Store.getEmployeeStatus(user.id);
-        const container = document.getElementById('btn-container');
-        const hoursDisplay = document.getElementById('monthly-hours');
-
-        if (hoursDisplay) {
-            const currentHours = await Store.calculateMonthlyHours(user.id);
-            hoursDisplay.textContent = Store.formatTime(currentHours);
-        }
-
-        if (!container) return;
-        
-        if (status === 'OUT') {
-            container.innerHTML = `
-                <button class="clock-btn clock-in" id="action-btn" data-action="IN">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                    <span>FICHAR ENTRADA</span>
-                </button>
-            `;
-        } else {
-            container.innerHTML = `
-                <button class="clock-btn clock-out" id="action-btn" data-action="OUT">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                    <span>FICHAR SALIDA</span>
-                </button>
-            `;
-        }
-
-        document.getElementById('action-btn').addEventListener('click', async (e) => {
-            const btn = e.currentTarget;
-            btn.disabled = true;
-            const action = btn.getAttribute('data-action');
-            const notesField = document.getElementById('record-notes');
-            const notes = notesField ? notesField.value : '';
-
-            await Store.clockAction(user.id, action, notes);
-            Store.showToast(action === 'IN' ? 'Entrada registrada' : 'Salida registrada', 'success');
-            
-            if (notesField) notesField.value = '';
-            await this.renderStatus();
-            await this.renderHistory();
-            await this.initCompliance(); // Refresh total hours in validation panel
-        });
-    },
-
-    async renderHistory() {
-        const user = Store.getUser();
-        const records = await Store.getRecords({ userId: user.id });
-        const recent = records.slice(0, 5);
-        
-        const tbody = document.querySelector('#personal-records tbody');
-        if (!tbody) return;
-
-        if (recent.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-secondary">No hay registros.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = recent.map(r => `
-            <tr>
-                <td style="font-size: 0.9rem;">
-                    <div>${new Date(r.timestamp).toLocaleDateString()}</div>
-                    <div style="font-size: 0.8rem; opacity: 0.6;">${new Date(r.timestamp).toLocaleTimeString()}</div>
-                </td>
-                <td>
-                    <span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span>
-                    ${r.is_validated ? '<span style="color: var(--secondary); margin-left: 0.5rem; font-size: 1.1rem;">✔</span>' : ''}
-                </td>
-            </tr>
-        `).join('');
-    },
-
-    initProfileForm() {
-        const user = Store.getUser();
-        const profileForm = document.getElementById('profile-form');
-        if (profileForm) {
-            profileForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const newName = document.getElementById('profile-name').value;
-                const newPass = document.getElementById('profile-password').value;
-                
-                const updated = await Store.updateProfile(user.id, newName, newPass || null);
-                if (updated) {
-                    Store.showToast('Perfil actualizado');
-                    Router.render();
-                } else {
-                    Store.showToast('Error al actualizar', 'error');
-                }
-            });
+            monthFilter.innerHTML = '<option value="">Sin datos aún</option>';
         }
     }
 };

@@ -24,7 +24,7 @@ export const LoginView = {
                         </form>
                         
                         <div id="auditor-portal-link" style="margin-top: 2.5rem; text-align: center; border-top: 1px solid var(--border); padding-top: 2rem;">
-                            <a href="https://github.com/juan/ingravity/blob/main/MANUAL.md" target="_blank" style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; transition: color 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">📖 Ver Manual de Usuario</a>
+                            <a href="#/manual" style="display: block; font-size: 0.85rem; color: var(--text-secondary); text-decoration: none; margin-bottom: 1rem; transition: color 0.3s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">📖 Ver Manual de Usuario</a>
                             <a href="javascript:void(0)" id="btn-show-audit" style="font-size: 0.75rem; color: var(--danger); text-decoration: none; opacity: 0.8; font-weight: 600;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">Gestión Cuerpo de Inspección (PIN)</a>
                         </div>
                     </div>

@@ -51,11 +51,12 @@ export const AuditorDashboard = {
                             <table class="table" id="audit-records">
                                 <thead>
                                     <tr>
-                                        <th>Identificador Cloud (UUID)</th>
+                                        <th>ID Registro</th>
                                         <th>Empleado</th>
                                         <th>Fecha/Hora (ISO)</th>
                                         <th>Acción</th>
-                                        <th>Certificación</th>
+                                        <th>Firma Empleado</th>
+                                        <th>Firma Empresa</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -68,7 +69,7 @@ export const AuditorDashboard = {
 
                 <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
                     <p><b>Musaraña Inspección</b> &copy; 2026</p>
-                    <a href="https://github.com/juan/ingravity/blob/main/MANUAL.md" target="_blank" style="color: var(--danger); text-decoration: none; font-weight: 600;">📖 Ver Guía de Auditoría</a>
+                    <a href="#/manual" style="color: var(--danger); text-decoration: none; font-weight: 600;">📖 Ver Guía de Auditoría</a>
                 </footer>
             </div>
         `;
@@ -120,18 +121,19 @@ export const AuditorDashboard = {
                     const rDate = new Date(r.timestamp);
                     return `
                     <tr>
+                        <td style="font-size: 0.7rem; font-family: monospace; color: var(--text-secondary);">${r.id.split('-')[0]}...</td>
                         <td style="font-weight: 500;">${r.user_name}</td>
                         <td style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
                         <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
                         <td>
                             ${r.is_validated 
                                 ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente de revisión</span>'}
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}
                         </td>
                         <td>
                             ${r.is_company_validated 
                                 ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente de revisión</span>'}
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}
                         </td>
                     </tr>
                 `}).join('');
