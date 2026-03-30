@@ -59,6 +59,9 @@ export const Store = {
         }
 
         const profile = await this.refreshCurrentUser(data.user.id);
+        if (profile) {
+            await this.logAuditAccess(profile.full_name);
+        }
         return profile;
     },
 
@@ -294,6 +297,18 @@ export const Store = {
         return data ? data.type : 'OUT';
     },
 
+    async getLastClockIn(userId) {
+        const { data } = await supabaseClient
+            .from('time_records')
+            .select('timestamp')
+            .eq('user_id', userId)
+            .eq('type', 'IN')
+            .order('timestamp', { ascending: false })
+            .limit(1)
+            .single();
+        return data;
+    },
+
     async validateMonth(userId, monthYear) {
         const [year, month] = monthYear.split('-');
         const startDate = new Date(year, month - 1, 1).toISOString();
@@ -356,6 +371,27 @@ export const Store = {
         };
     },
 
+    // Audit Logging
+    async logAuditAccess(auditorName) {
+        try {
+            await supabaseClient.from('audit_logs').insert({
+                auditor_name: auditorName,
+                access_type: 'LOGIN_PORTAL',
+                user_agent: navigator.userAgent
+            });
+        } catch (e) {
+            console.warn('Audit table may not exist yet:', e);
+        }
+    },
+
+    async getAuditLogs() {
+        const { data } = await supabaseClient
+            .from('audit_logs')
+            .select('*')
+            .order('created_at', { ascending: false });
+        return data || [];
+    },
+
     // Notifications (Toast)
     showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
@@ -406,20 +442,20 @@ export const Store = {
         });
 
         // Add Legal Summary at the end for single-employee/month exports
-        if (empId !== 'ALL' && monthId !== 'ALL') {
-            const hours = await this.calculateMonthlyHours(empId, monthId);
-            const firstRec = records[0];
+        if (empId !== 'ALL') {
+            const hours = await this.calculateMonthlyHours(empId, monthId === 'ALL' ? null : monthId);
+            const firstRec = records[0] || {};
             
             csvRows.push('');
             csvRows.push('--- RESUMEN LEGAL DE AUDITORÍA ---');
             csvRows.push(`"TOTAL HORAS TRABAJADAS (PERIODO)","${this.formatTime(hours)}"`);
             
-            const empCert = firstRec.is_validated 
+            const empCert = (firstRec && firstRec.is_validated)
                 ? `VALIDADO POR EMPLEADO EL ${new Date(firstRec.validation_date).toLocaleString('es-ES')}`
                 : 'PENDIENTE DE VALIDACIÓN POR EMPLEADO';
             csvRows.push(`"Certificación Empleado","${empCert}"`);
             
-            const compCert = firstRec.is_company_validated
+            const compCert = (firstRec && firstRec.is_company_validated)
                 ? `VALIDADO POR EMPRESA EL ${new Date(firstRec.company_validation_date).toLocaleString('es-ES')}`
                 : 'PENDIENTE DE REVISIÓN EMPRESARIAL';
             csvRows.push(`"Certificación Empresa","${compCert}"`);

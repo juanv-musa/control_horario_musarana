@@ -164,7 +164,7 @@ export const EmployeeDashboard = {
                 statusContainer.innerHTML = '<span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● TRABAJANDO</span>';
                 
                 timerDisplay.style.display = 'block';
-                const { data: lastIn } = await supabaseClient.from('time_records').select('timestamp').eq('user_id', user.id).eq('type', 'IN').order('timestamp', { ascending: false }).limit(1).single();
+                const lastIn = await Store.getLastClockIn(user.id);
                 
                 if (lastIn) {
                     const startTime = new Date(lastIn.timestamp);
