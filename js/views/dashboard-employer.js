@@ -187,8 +187,7 @@ export const EmployerDashboard = {
                 </div>
                 
                 <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
-                    <p><b>Musaraña Gestión Laboral</b> &copy; 2026</p>
-                    <a href="#/manual" style="color: var(--danger); text-decoration: none; font-weight: 600;">📖 Manual</a>
+                    <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>
         `;
@@ -198,6 +197,8 @@ export const EmployerDashboard = {
         const user = Store.getUser();
         const records = await Store.getRecords();
         const availableMonths = Store.getAvailableMonths(records);
+
+        await this.updateSummaryStats();
 
         // Audit PIN Management
         const btnUpdatePin = document.getElementById('btn-update-audit-pin');
@@ -250,7 +251,6 @@ export const EmployerDashboard = {
             toggleBtn.addEventListener('click', () => {
                 userForm.reset();
                 document.getElementById('nu-id').value = '';
-                // Restore visibility in case it was hidden by an edit
                 document.getElementById('nu-username').parentElement.style.display = 'block';
                 document.getElementById('nu-password').parentElement.style.display = 'block';
                 
@@ -283,7 +283,7 @@ export const EmployerDashboard = {
                     Store.showToast('Usuario guardado con éxito', 'success');
                     formContainer.style.display = 'none';
                     toggleBtn.style.display = 'block';
-                    await this.renderUsers();
+                    await this.renderUsers(targetMonth);
                 } else {
                     Store.showToast(res.error, 'error');
                 }
@@ -311,7 +311,6 @@ export const EmployerDashboard = {
                 recordFormContainer.style.display = 'block';
                 btnAddRecord.style.display = 'none';
                 
-                // Set default time to now
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
                 document.getElementById('rf-timestamp').value = now.toISOString().slice(0, 16);
@@ -347,8 +346,9 @@ export const EmployerDashboard = {
                     Store.showToast(id ? 'Registro actualizado' : 'Registro añadido', 'success');
                     recordFormContainer.style.display = 'none';
                     btnAddRecord.style.display = 'block';
+                    await this.updateSummaryStats();
                     await this.renderGlobalRecords(globalTargetMonth);
-                    await this.renderUsers(targetMonth); // Refresh hours
+                    await this.renderUsers(targetMonth); 
                 }
             });
         }
@@ -364,15 +364,40 @@ export const EmployerDashboard = {
         await this.renderGlobalRecords(globalTargetMonth);
     },
 
+    async updateSummaryStats() {
+        const statsToday = document.getElementById('stats-today');
+        const statsActive = document.getElementById('stats-active');
+
+        if (!statsToday || !statsActive) return;
+
+        // Fetch all profiles to find total employees
+        const profiles = await Store.adminGetAllUsers();
+        const employees = profiles.filter(p => p.role === 'employee');
+
+        // Fetch all records for today
+        const today = new Date().toISOString().split('T')[0];
+        const { data: todayRecords } = await supabaseClient
+            .from('time_records')
+            .select('*')
+            .gte('timestamp', `${today}T00:00:00Z`)
+            .lte('timestamp', `${today}T23:59:59Z`);
+
+        statsToday.textContent = todayRecords ? todayRecords.length : 0;
+
+        // Count active workers (last record is IN)
+        let activeCount = 0;
+        for (const emp of employees) {
+            const status = await Store.getEmployeeStatus(emp.id);
+            if (status === 'IN') activeCount++;
+        }
+        statsActive.textContent = activeCount;
+    },
+
     async renderGlobalRecords(monthStr = null) {
         const tbody = document.querySelector('#global-records tbody');
         if (!tbody) return;
 
         const records = await Store.getRecords({ month: monthStr });
-        const allRecords = await Store.getRecords(); // For stats
-
-        // ... stats logic ...
-        // (existing stats logic remains)
 
         if (records.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">Sin registros.</td></tr>';
@@ -395,13 +420,12 @@ export const EmployerDashboard = {
                             data-timestamp="${r.timestamp}" 
                             data-type="${r.type}" 
                             data-notes="${r.notes || ''}"
-                            style="background: none; border: none; cursor: pointer; color: var(--primary);">✏️</button>
+                            style="background: none; border: none; cursor: pointer; color: var(--primary); padding: 0.25rem;">✏️</button>
                 </td>
             </tr>
             `;
         }).join('');
 
-        // Attach Record Edit
         document.querySelectorAll('.btn-edit-record').forEach(btn => {
             btn.onclick = async (e) => {
                 const users = await Store.adminGetAllUsers();
@@ -416,7 +440,6 @@ export const EmployerDashboard = {
 
                 document.getElementById('rf-id').value = id;
                 document.getElementById('rf-user-id').value = userId;
-                // Convert ISO to Local for datetime-local input
                 const date = new Date(timestamp);
                 date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
                 document.getElementById('rf-timestamp').value = date.toISOString().slice(0, 16);
@@ -439,14 +462,13 @@ export const EmployerDashboard = {
 
         const users = await Store.adminGetAllUsers();
         const tbody = document.querySelector('#users-table tbody');
+        if (!tbody) return;
         
         const userRows = await Promise.all(users.map(async u => {
             const hours = await Store.calculateMonthlyHours(u.id, monthStr);
             const periodRecords = await Store.getRecords({ userId: u.id, month: monthStr });
             
-            // Check employee signature status
             const isEmployeeSigned = periodRecords.length > 0 && periodRecords.every(r => r.is_validated);
-            // Check company signature status
             const isCompanySigned = periodRecords.length > 0 && periodRecords.every(r => r.is_company_validated);
 
             return `
@@ -455,27 +477,26 @@ export const EmployerDashboard = {
                     <td style="font-family: monospace; font-weight: 700; color: var(--text-primary);">${Store.formatTime(hours)}</td>
                     <td>
                         <span class="badge ${isEmployeeSigned ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.75rem;">
-                            ${isEmployeeSigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente de revisión' : 'SIN DATOS')}
+                            ${isEmployeeSigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente' : 'SIN DATOS')}
                         </span>
                     </td>
                     <td>
                         <span class="badge ${isCompanySigned ? 'badge-info' : 'badge-inactive'}" style="font-size: 0.75rem;">
-                            ${isCompanySigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente de revisión' : 'SIN DATOS')}
+                            ${isCompanySigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente' : 'SIN DATOS')}
                         </span>
                     </td>
                     <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
                         <button class="btn-edit-user" 
                                 data-id="${u.id}" 
                                 data-name="${u.full_name}" 
-                                data-username="${u.username || ''}" 
                                 data-role="${u.role}" 
                                 style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.25rem;" 
-                                title="Editar nombre o rol">✏️</button>
+                                title="Editar datos">✏️</button>
                         
                         ${isEmployeeSigned && !isCompanySigned ? 
                             `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white;">✍️ Firma Empresa</button>` : ''
                         }
-                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="Exportar CSV de este mes">⬇️ Reporte</button>
+                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="CSV de este mes">⬇️ Reporte</button>
                     </td>
                 </tr>
             `;
@@ -483,14 +504,13 @@ export const EmployerDashboard = {
 
         tbody.innerHTML = userRows.join('');
 
-        // Attach Sign Action
         document.querySelectorAll('.btn-company-sign').forEach(btn => {
             btn.onclick = async (e) => {
                 const id = e.currentTarget.getAttribute('data-id');
                 const filter = document.getElementById('employer-month-filter');
                 const tMonth = filter ? filter.value : null;
                 
-                if (confirm(`¿Confirma la correcta validación de los registros de este mes para este empleado? Esta acción quedará registrada como firma de la empresa.`)) {
+                if (confirm(`¿Confirma la correcta validación de los registros de este mes para este empleado?`)) {
                     const success = await Store.companyValidateMonth(id, tMonth);
                     if (success) {
                         Store.showToast('Mes firmado por la Empresa', 'success');
@@ -500,7 +520,6 @@ export const EmployerDashboard = {
             };
         });
 
-        // Attach Edit
         document.querySelectorAll('.btn-edit-user').forEach(btn => {
             btn.onclick = (e) => {
                 const id = btn.getAttribute('data-id');
@@ -511,7 +530,6 @@ export const EmployerDashboard = {
                 document.getElementById('nu-name').value = name;
                 document.getElementById('nu-role').value = role;
                 
-                // Email and password cannot be edited for others via regular SDK
                 document.getElementById('nu-username').parentElement.style.display = 'none';
                 document.getElementById('nu-password').parentElement.style.display = 'none';
                 
@@ -522,7 +540,6 @@ export const EmployerDashboard = {
             };
         });
 
-        // Attach Export
         document.querySelectorAll('.btn-export-user').forEach(btn => {
             btn.onclick = async (e) => {
                 e.preventDefault();
