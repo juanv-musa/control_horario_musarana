@@ -35,7 +35,7 @@ export const EmployeeDashboard = {
                             </div>
                         </div>
                         
-                        <div class="dashboard-grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div class="responsive-grid">
                             <div>
                                 <h3 class="mb-4">📋 Movimientos Recientes</h3>
                                 <div class="table-container" style="background: white;">
@@ -64,8 +64,8 @@ export const EmployeeDashboard = {
                                     </select>
                                     
                                     <div id="validation-panel" style="display: none;">
-                                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase;">TOTAL DEL PERIODO</div>
-                                        <div id="employee-history-result" style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">0h 0m</div>
+                                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 700;">TOTAL DEL PERIODO</div>
+                                        <div id="employee-history-result" style="font-size: 1.75rem; font-weight: 800; color: var(--primary); margin-bottom: 1.5rem;">0h 0m</div>
                                         
                                         <div id="signature-status-container">
                                             <!-- Status or Button -->

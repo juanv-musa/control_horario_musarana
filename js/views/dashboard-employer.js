@@ -41,7 +41,7 @@ export const EmployerDashboard = {
                         
                         <div id="new-user-form-container" style="display: none; padding: 1.5rem; background: rgba(243, 244, 246, 0.6); border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid var(--border);">
                             <h4 id="new-user-title">Alta de Usuario</h4>
-                            <form id="new-user-form" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                            <form id="new-user-form" class="responsive-grid" style="margin-top: 1rem;">
                                 <input type="hidden" id="nu-id">
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label class="form-label">Nombre Completo</label>
@@ -63,9 +63,9 @@ export const EmployerDashboard = {
                                         <option value="auditor">Auditoría (Lectura Legal)</option>
                                     </select>
                                 </div>
-                                <div style="grid-column: 1 / -1; margin-top: 1rem;">
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
                                     <button type="submit" class="btn btn-primary" id="nu-submit">Guardar Usuario</button>
-                                    <button type="button" class="btn" id="btn-cancel-new-user" style="margin-left: 0.5rem; background: white; border: 1px solid var(--border);">Cancelar</button>
+                                    <button type="button" class="btn" id="btn-cancel-new-user" style="background: white; border: 1px solid var(--border);">Cancelar</button>
                                 </div>
                             </form>
                         </div>
@@ -113,18 +113,38 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
+                    <div class="glass-panel" style="padding: 2.5rem; margin-bottom: 2rem; border-left: 5px solid var(--danger);">
+                        <h2 style="margin: 0; color: #991B1B;">🔐 Acceso Auditoría Externa</h2>
+                        <p class="text-secondary" style="margin: 0.5rem 0 1.5rem 0;">Define el código (PIN) que usarán los inspectores para acceder al portal sin email.</p>
+                        
+                        <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); max-width: 500px;">
+                            <div class="form-group">
+                                <label class="form-label">Código de Acceso Actual (PIN)</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <input type="text" id="audit-pin-value" class="form-control" placeholder="Ej: 123456" style="font-family: monospace; font-weight: bold; font-size: 1.2rem;">
+                                    <button id="btn-update-audit-pin" class="btn btn-primary">Actualizar</button>
+                                </div>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                                    Nota: Cambie este código periódicamente para mayor seguridad.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="glass-panel" style="padding: 2rem; margin-top: 1.5rem;">
                         <h3 class="mb-4">⚙️ Configuración de Perfil</h3>
-                        <form id="profile-form" style="max-width: 500px;">
-                            <div class="form-group">
+                        <form id="profile-form" class="responsive-grid" style="max-width: 800px;">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label">Nombre para Mostrar</label>
                                 <input type="text" id="profile-name" class="form-control" value="${user.full_name}" required>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label">Nueva Contraseña</label>
-                                <input type="password" id="profile-password" class="form-control" placeholder="Dejar en blanco para conservar la actual">
+                                <input type="password" id="profile-password" class="form-control" placeholder="Dejar en blanco para no cambiar">
                             </div>
-                            <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                            <div style="margin-top: 1rem;">
+                                <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -136,6 +156,18 @@ export const EmployerDashboard = {
         const user = Store.getUser();
         const records = await Store.getRecords();
         const availableMonths = Store.getAvailableMonths(records);
+
+        // Audit PIN Management
+        const btnUpdatePin = document.getElementById('btn-update-audit-pin');
+        if (btnUpdatePin) {
+            btnUpdatePin.addEventListener('click', async () => {
+                const newCode = document.getElementById('audit-pin-value').value;
+                if (!newCode || newCode.length < 4) {
+                    return Store.showToast('El código debe tener al menos 4 caracteres', 'error');
+                }
+                await Store.updateAuditCode(newCode);
+            });
+        }
 
         // Profile Form
         const profileForm = document.getElementById('profile-form');

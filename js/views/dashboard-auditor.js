@@ -25,7 +25,7 @@ export const AuditorDashboard = {
                             <p class="text-secondary" style="margin-top: 0;">Portal de acceso para la auditoría de trabajo. Registros conforme al Art. 34.9 ET.</p>
                         </div>
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 1rem; align-items: end; margin-bottom: 2.5rem; background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md);">
+                        <div class="dashboard-grid" style="align-items: end; margin-bottom: 2.5rem; background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md);">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label">Filtrar Empleado</label>
                                 <select id="export-filter-employee" class="form-control" style="background: white;">
@@ -39,7 +39,7 @@ export const AuditorDashboard = {
                                     <!-- Filled dynamically -->
                                 </select>
                             </div>
-                            <button class="btn btn-primary" id="btn-export" style="height: 42px;">Generar Reporte Firma</button>
+                            <button class="btn btn-primary" id="btn-export" style="height: 42px; width: 100%;">Generar Reporte Firma</button>
                         </div>
                         
                         <div id="audit-summary-container" style="display: none; background: #DBEAFE; color: #1E40AF; padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid #BFDBFE;">

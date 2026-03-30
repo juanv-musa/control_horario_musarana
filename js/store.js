@@ -46,6 +46,32 @@ export const Store = {
         localStorage.removeItem('currentUser');
     },
 
+    async loginWithCode(code) {
+        const AUDITOR_EMAIL = 'auditoria@musarana.cloud';
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: AUDITOR_EMAIL,
+            password: code
+        });
+
+        if (error) {
+            this.showToast('Código de acceso incorrecto o caducado', 'error');
+            return null;
+        }
+
+        const profile = await this.refreshCurrentUser(data.user.id);
+        return profile;
+    },
+
+    async updateAuditCode(newCode) {
+        // This is tricky because the Auditor is a different user. 
+        // We'll use a special RPC or just updating the Auditor's record in auth.users 
+        // if we are the admin. However, Supabase Client doesnt allow updating OTHER users' passwords easily.
+        // For this demo/MVP, we'll suggest the admin to manually change it in Supabase Auth Dashboard,
+        // or we'd need an Edge Function.
+        this.showToast('El código se gestiona en el panel de Supabase (User: auditoria@musarana.cloud)', 'info');
+        return true;
+    },
+
     getUser() {
         const data = localStorage.getItem('currentUser');
         return data ? JSON.parse(data) : null;
