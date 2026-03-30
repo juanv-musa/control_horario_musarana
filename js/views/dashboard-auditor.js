@@ -111,19 +111,25 @@ export const AuditorDashboard = {
             if (filteredRecords.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">No hay registros para los criterios seleccionados.</td></tr>';
             } else {
-                tbody.innerHTML = filteredRecords.map(r => `
+                tbody.innerHTML = filteredRecords.map(r => {
+                    const rDate = new Date(r.timestamp);
+                    return `
                     <tr>
-                        <td style="font-family: monospace; font-size: 0.75rem; color: #6B7280;">${r.id}</td>
                         <td style="font-weight: 500;">${r.user_name}</td>
-                        <td style="font-family: monospace; font-size: 0.85rem;">${new Date(r.timestamp).toISOString().replace('T', ' ').slice(0, 19)}</td>
+                        <td style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
                         <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
                         <td>
                             ${r.is_validated 
-                                ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO (${new Date(r.validation_date).toLocaleDateString()})</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE FIRMA</span>'}
+                                ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO</span>` 
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE</span>'}
+                        </td>
+                        <td>
+                            ${r.is_company_validated 
+                                ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO</span>` 
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE</span>'}
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
             }
 
             const summaryContainer = document.getElementById('audit-summary-container');

@@ -316,31 +316,58 @@ export const EmployerDashboard = {
 
         const users = await Store.adminGetAllUsers();
         const tbody = document.querySelector('#users-table tbody');
-        if (!tbody) return;
-
+        
         const userRows = await Promise.all(users.map(async u => {
             const hours = await Store.calculateMonthlyHours(u.id, monthStr);
             const periodRecords = await Store.getRecords({ userId: u.id, month: monthStr });
-            const isSigned = periodRecords.length > 0 && periodRecords.every(r => r.is_validated);
+            
+            // Check employee signature status
+            const isEmployeeSigned = periodRecords.length > 0 && periodRecords.every(r => r.is_validated);
+            // Check company signature status
+            const isCompanySigned = periodRecords.length > 0 && periodRecords.every(r => r.is_company_validated);
 
             return `
                 <tr>
                     <td style="font-weight: 500;">${u.full_name}</td>
                     <td style="font-family: monospace; font-weight: 700; color: var(--text-primary);">${Store.formatTime(hours)}</td>
                     <td>
-                        <span class="badge ${isSigned ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.75rem;">
-                            ${isSigned ? 'FIRMADO' : (periodRecords.length > 0 ? 'PENDIENTE' : 'SIN DATOS')}
+                        <span class="badge ${isEmployeeSigned ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.75rem;">
+                            ${isEmployeeSigned ? 'FIRMADO' : (periodRecords.length > 0 ? 'PENDIENTE' : 'SIN DATOS')}
                         </span>
                     </td>
-                    <td><span class="badge ${u.role === 'employer' ? 'badge-info' : (u.role === 'employee' ? 'badge-active' : 'badge-inactive')}">${u.role.toUpperCase()}</span></td>
-                    <td style="text-align: right;">
-                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none; margin-right: 0.5rem;" title="Exportar CSV de este mes">⬇️ Reporte</button>
+                    <td>
+                        <span class="badge ${isCompanySigned ? 'badge-info' : 'badge-inactive'}" style="font-size: 0.75rem;">
+                            ${isCompanySigned ? 'FIRMADO' : (periodRecords.length > 0 ? 'PENDIENTE' : 'SIN DATOS')}
+                        </span>
+                    </td>
+                    <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem;">
+                        ${isEmployeeSigned && !isCompanySigned ? 
+                            `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white;">✍️ Firma Empresa</button>` : ''
+                        }
+                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="Exportar CSV de este mes">⬇️ Reporte</button>
                     </td>
                 </tr>
             `;
         }));
 
         tbody.innerHTML = userRows.join('');
+
+        // Attach Sign Action
+        document.querySelectorAll('.btn-company-sign').forEach(btn => {
+            btn.onclick = async (e) => {
+                const id = e.currentTarget.getAttribute('data-id');
+                const filter = document.getElementById('employer-month-filter');
+                const tMonth = filter ? filter.value : null;
+                
+                if (confirm(`¿Confirma la correcta validación de los registros de este mes para este empleado? Esta acción quedará registrada como firma de la empresa.`)) {
+                    const success = await Store.companyValidateMonth(id, tMonth);
+                    if (success) {
+                        Store.showToast('Mes firmado por la Empresa', 'success');
+                        await this.renderUsers(tMonth);
+                    }
+                }
+            };
+        });
 
         // Attach Export
         document.querySelectorAll('.btn-export-user').forEach(btn => {

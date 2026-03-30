@@ -285,6 +285,24 @@ export const Store = {
         return !error;
     },
 
+    async companyValidateMonth(userId, monthYear) {
+        const [year, month] = monthYear.split('-');
+        const startDate = new Date(year, month - 1, 1).toISOString();
+        const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
+
+        const { error } = await supabaseClient
+            .from('time_records')
+            .update({ 
+                is_company_validated: true, 
+                company_validation_date: new Date().toISOString() 
+            })
+            .eq('user_id', userId)
+            .gte('timestamp', startDate)
+            .lte('timestamp', endDate);
+        
+        return !error;
+    },
+
     // Notifications (Toast)
     showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
@@ -319,7 +337,7 @@ export const Store = {
             return;
         }
 
-        const headers = ["UUID", "Empleado", "Marca de Tiempo", "Tipo", "Observaciones", "Validado"];
+        const headers = ["UUID", "Empleado", "Marca de Tiempo", "Tipo", "Observaciones", "Firma Empleado", "Firma Empresa"];
         const csvRows = [headers.join(',')];
         
         records.forEach(r => {
@@ -329,7 +347,8 @@ export const Store = {
                 r.timestamp,
                 r.type,
                 `"${r.notes || ''}"`,
-                r.is_validated ? 'SI' : 'NO'
+                r.is_validated ? 'SI' : 'NO',
+                r.is_company_validated ? 'SI' : 'NO'
             ].join(','));
         });
 
@@ -337,7 +356,8 @@ export const Store = {
             const hours = await this.calculateMonthlyHours(empId, monthId);
             csvRows.push('');
             csvRows.push(`"TOTAL HORAS","${this.formatTime(hours)}"`);
-            csvRows.push(`"Certificado de conformidad digital","${records[0].is_validated ? 'VALIDADO POR EMPLEADO' : 'PENDIENTE'}"`);
+            csvRows.push(`"Certificación Empleado","${records[0].is_validated ? 'VALIDADO POR EMPLEADO ('+new Date(records[0].validation_date).toLocaleDateString()+')' : 'PENDIENTE'}"`);
+            csvRows.push(`"Certificación Empresa","${records[0].is_company_validated ? 'VALIDADO POR EMPRESA ('+new Date(records[0].company_validation_date).toLocaleDateString()+')' : 'PENDIENTE'}"`);
         }
 
         const blob = new Blob(["\ufeff" + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
