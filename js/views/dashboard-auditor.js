@@ -9,7 +9,7 @@ export const AuditorDashboard = {
             <div style="width: 100%;">
                 <nav class="navbar" style="background: rgba(239, 68, 68, 0.05);">
                     <div class="nav-brand">
-                        <img src="assets/logo.png" alt="MUSARANA" style="height: 48px;"> 
+                        <img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"> 
                         <span style="font-size: 0.9rem; margin-left: 1rem; color: var(--danger); font-weight: 700; border-left: 2px solid var(--danger); padding-left: 1rem;">ACCESO AUDITORÍA</span>
                     </div>
                     <div class="user-info">
@@ -65,6 +65,11 @@ export const AuditorDashboard = {
                         </div>
                     </div>
                 </div>
+
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
+                    <p><b>Musaraña Inspección</b> &copy; 2026</p>
+                    <a href="https://github.com/juan/ingravity/blob/main/MANUAL.md" target="_blank" style="color: var(--danger); text-decoration: none; font-weight: 600;">📖 Ver Guía de Auditoría</a>
+                </footer>
             </div>
         `;
     },

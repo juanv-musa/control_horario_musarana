@@ -4,24 +4,16 @@ import { Router } from '../router.js';
 export const EmployeeDashboard = {
     render() {
         const user = Store.getUser();
-        if (!user) return '';
-
         return `
             <div style="width: 100%;">
                 <nav class="navbar">
-                    <div class="nav-brand"><img src="assets/logo.png" alt="MUSARANA" style="height: 48px;"></div>
+                    <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
                     <div class="user-info">
                         <span class="user-role">Empleado</span>
                         <span style="font-weight: 500;">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
                     </div>
                 </nav>
-                <div class="container mt-6">
-                    <div class="glass-panel" style="padding: 2.5rem; max-width: 800px; margin: 0 auto;">
-                        <div style="text-align: center; margin-bottom: 3rem;">
-                            <h2 class="mb-4">Registro de Jornada</h2>
-                            <div id="monthly-summary-box" style="background: rgba(140, 198, 63, 0.1); color: var(--primary); padding: 1.5rem; border-radius: var(--radius-md); font-weight: 600; border: 1px solid rgba(140, 198, 63, 0.3); display: inline-block; min-width: 300px;">
-                                ⏳ Cómputo Mes Actual: <span id="monthly-hours" style="font-size: 1.5rem; margin-left: 0.5rem;">Cargando...</span>
                             </div>
                         </div>
 

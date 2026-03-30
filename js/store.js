@@ -255,6 +255,33 @@ export const Store = {
         return data;
     },
 
+    async adminUpdateRecord(recordId, newData) {
+        const { error } = await supabaseClient
+            .from('time_records')
+            .update({
+                timestamp: newData.timestamp,
+                type: newData.type,
+                notes: (newData.notes || '').trim()
+            })
+            .eq('id', recordId);
+        
+        return !error;
+    },
+
+    async adminAddRecord(userId, userName, timestamp, type, notes) {
+        const { error } = await supabaseClient
+            .from('time_records')
+            .insert({
+                user_id: userId,
+                user_name: userName,
+                timestamp: timestamp,
+                type: type,
+                notes: (notes || '').trim()
+            });
+        
+        return !error;
+    },
+
     async getEmployeeStatus(userId) {
         const { data } = await supabaseClient
             .from('time_records')
