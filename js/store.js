@@ -330,6 +330,32 @@ export const Store = {
         return !error;
     },
 
+    async getDashboardStats() {
+        // Fetch all profiles to find employees
+        const profiles = await this.adminGetAllUsers();
+        const employees = profiles.filter(p => p.role === 'employee');
+
+        // Fetch today's records
+        const today = new Date().toISOString().split('T')[0];
+        const { data: todayRecords } = await supabaseClient
+            .from('time_records')
+            .select('id')
+            .gte('timestamp', `${today}T00:00:00Z`)
+            .lte('timestamp', `${today}T23:59:59Z`);
+
+        // Count active workers (last record is IN)
+        let activeCount = 0;
+        for (const emp of employees) {
+            const status = await this.getEmployeeStatus(emp.id);
+            if (status === 'IN') activeCount++;
+        }
+
+        return {
+            todayRecords: todayRecords ? todayRecords.length : 0,
+            activeCount
+        };
+    },
+
     // Notifications (Toast)
     showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');

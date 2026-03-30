@@ -11,6 +11,7 @@ export const EmployerDashboard = {
                 <nav class="navbar">
                     <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
                     <div class="user-info">
+                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem;">📖 Manual</a>
                         <span class="user-role">Musaraña</span>
                         <span style="font-weight: 500;">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
@@ -370,26 +371,9 @@ export const EmployerDashboard = {
 
         if (!statsToday || !statsActive) return;
 
-        // Fetch all profiles to find total employees
-        const profiles = await Store.adminGetAllUsers();
-        const employees = profiles.filter(p => p.role === 'employee');
-
-        // Fetch all records for today
-        const today = new Date().toISOString().split('T')[0];
-        const { data: todayRecords } = await supabaseClient
-            .from('time_records')
-            .select('*')
-            .gte('timestamp', `${today}T00:00:00Z`)
-            .lte('timestamp', `${today}T23:59:59Z`);
-
-        statsToday.textContent = todayRecords ? todayRecords.length : 0;
-
-        // Count active workers (last record is IN)
-        let activeCount = 0;
-        for (const emp of employees) {
-            const status = await Store.getEmployeeStatus(emp.id);
-            if (status === 'IN') activeCount++;
-        }
+        const { todayRecords, activeCount } = await Store.getDashboardStats();
+        
+        statsToday.textContent = todayRecords;
         statsActive.textContent = activeCount;
     },
 

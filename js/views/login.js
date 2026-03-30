@@ -5,7 +5,7 @@ export const LoginView = {
     render() {
         return `
             <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #f0fdf4 0%, #f9fafb 100%);">
-                <div class="glass-panel" style="width: 100%; max-width: 420px; padding: 3rem; text-align: center; border: 1px solid rgba(255,255,255,0.8);">
+                <div class="glass-panel" style="width: 100%; max-width: 420px; padding: 3rem; text-align: center; border: 1px solid rgba(255,255,255,0.8); margin: 2rem 0;">
                     <img src="assets/logo.png" alt="MUSARAÑA Logo" style="height: 80px; margin-bottom: 2.5rem; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1));">
                     
                     <div id="login-content">
@@ -42,10 +42,9 @@ export const LoginView = {
                             <button id="btn-hide-audit" style="background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;">&larr; Volver al acceso de personal</button>
                         </div>
                     </div>
-                    </div>
                 </div>
 
-                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; margin-top: 1rem;">
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem;">
                     <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>

@@ -8,6 +8,7 @@ export const EmployeeDashboard = {
                 <nav class="navbar">
                     <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
                     <div class="user-info">
+                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem;">📖 Manual</a>
                         <span class="user-role">Empleado</span>
                         <span style="font-weight: 500;">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
@@ -80,6 +81,28 @@ export const EmployeeDashboard = {
                             </div>
                         </div>
                     </div>
+
+                    <!-- Profile Section -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="glass-panel" style="padding: 2rem;">
+                                <h3 style="margin-top: 0;">⚙️ Configuración de Perfil</h3>
+                                <form id="profile-form" class="responsive-grid" style="max-width: 800px;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">Nombre para Mostrar</label>
+                                        <input type="text" id="profile-name" class="form-control" value="${user.full_name}" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">Nueva Contraseña</label>
+                                        <input type="password" id="profile-password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                                    </div>
+                                    <div style="margin-top: 1rem;">
+                                        <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
@@ -96,6 +119,25 @@ export const EmployeeDashboard = {
         await this.initClockAction();
         await this.initHistory();
         await this.initValidation();
+        this.initProfile();
+    },
+
+    initProfile() {
+        const user = Store.getUser();
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const newName = document.getElementById('profile-name').value;
+                const newPass = document.getElementById('profile-password').value;
+                
+                const updated = await Store.updateProfile(user.id, newName, newPass || null);
+                if (updated) {
+                    Store.showToast('Perfil actualizado correctamente', 'success');
+                    window.location.reload(); 
+                }
+            });
+        }
     },
 
     async initClockAction() {

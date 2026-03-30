@@ -13,6 +13,7 @@ export const AuditorDashboard = {
                         <span style="font-size: 0.9rem; margin-left: 1rem; color: var(--danger); font-weight: 700; border-left: 2px solid var(--danger); padding-left: 1rem;">ACCESO AUDITORÍA</span>
                     </div>
                     <div class="user-info">
+                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #FEF2F2; color: #DC2626; border: none; font-size: 0.85rem;">📖 Manual</a>
                         <span class="user-role" style="background: #FEE2E2; color: #991B1B;">Auditoría</span>
                         <span style="font-weight: 500;">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
