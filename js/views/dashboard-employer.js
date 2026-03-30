@@ -344,12 +344,15 @@ export const EmployerDashboard = {
 
         // Attach Export
         document.querySelectorAll('.btn-export-user').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const id = e.target.getAttribute('data-id');
+            btn.onclick = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const id = e.currentTarget.getAttribute('data-id');
                 const filter = document.getElementById('employer-month-filter');
                 const tMonth = filter ? filter.value : 'ALL';
                 await Store.exportEmployeeCSV(id, tMonth);
-            });
+                return false;
+            };
         });
     }
 };

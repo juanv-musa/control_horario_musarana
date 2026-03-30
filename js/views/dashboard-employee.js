@@ -188,14 +188,14 @@ export const EmployeeDashboard = {
         
         if (status === 'OUT') {
             container.innerHTML = `
-                <button class="clock-btn clock-in" id="action-btn" data-action="IN" style="width: 100%; height: 120px;">
+                <button class="clock-btn clock-in" id="action-btn" data-action="IN">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
                     <span>FICHAR ENTRADA</span>
                 </button>
             `;
         } else {
             container.innerHTML = `
-                <button class="clock-btn clock-out" id="action-btn" data-action="OUT" style="width: 100%; height: 120px;">
+                <button class="clock-btn clock-out" id="action-btn" data-action="OUT">
                     <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     <span>FICHAR SALIDA</span>
                 </button>

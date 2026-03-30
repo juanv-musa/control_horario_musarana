@@ -124,7 +124,7 @@ export const AuditorDashboard = {
                         <td>
                             ${r.is_validated 
                                 ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ FIRMADO (${new Date(r.validation_date).toLocaleDateString()})</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⚠ PENDIENTE</span>'}
+                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ PENDIENTE FIRMA</span>'}
                         </td>
                     </tr>
                 `).join('');
@@ -152,11 +152,15 @@ export const AuditorDashboard = {
 
         const exportBtn = document.getElementById('btn-export');
         if (exportBtn) {
-            exportBtn.addEventListener('click', async () => {
+            // Remove any old listener just in case (though SPA re-renders usually clean headers)
+            exportBtn.onclick = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const empId = selectEmployee ? selectEmployee.value : 'ALL';
                 const monthId = selectMonth ? selectMonth.value : 'ALL';
                 await Store.exportEmployeeCSV(empId, monthId);
-            });
+                return false;
+            };
         }
     }
 };
