@@ -111,8 +111,8 @@ export const EmployeeDashboard = {
         let timerInterval = null;
 
         const updateUI = async () => {
-            const statusRecord = await Store.getEmployeeStatus(user.id);
-            const isWorking = statusRecord.type === 'IN';
+            const currentStatus = await Store.getEmployeeStatus(user.id);
+            const isWorking = (currentStatus === 'IN');
 
             if (timerInterval) clearInterval(timerInterval);
 
@@ -123,17 +123,23 @@ export const EmployeeDashboard = {
                 statusContainer.innerHTML = '<span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● TRABAJANDO</span>';
                 
                 timerDisplay.style.display = 'block';
-                const startTime = new Date(statusRecord.timestamp);
-                const startTimer = () => {
-                    const now = new Date();
-                    const diff = now - startTime;
-                    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
-                    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-                    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-                    timerDisplay.textContent = `${h}:${m}:${s}`;
-                };
-                startTimer();
-                timerInterval = setInterval(startTimer, 1000);
+                // To get actual start time, we need the record. Let's do a one-off fetch for the last IN record if needed.
+                // For simplicity, we just keep the timer for current session.
+                const { data: lastIn } = await supabaseClient.from('time_records').select('timestamp').eq('user_id', user.id).eq('type', 'IN').order('timestamp', { ascending: false }).limit(1).single();
+                
+                if (lastIn) {
+                    const startTime = new Date(lastIn.timestamp);
+                    const startTimer = () => {
+                        const now = new Date();
+                        const diff = now - startTime;
+                        const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                        const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                        const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                        timerDisplay.textContent = `${h}:${m}:${s}`;
+                    };
+                    startTimer();
+                    timerInterval = setInterval(startTimer, 1000);
+                }
             } else {
                 btnClock.className = 'clock-btn clock-in';
                 btnText.textContent = 'FICHAR ENTRADA';
@@ -145,8 +151,8 @@ export const EmployeeDashboard = {
 
         btnClock.onclick = async () => {
             btnClock.disabled = true;
-            const statusRecord = await Store.getEmployeeStatus(user.id);
-            const action = statusRecord.type === 'IN' ? 'OUT' : 'IN';
+            const currentStatus = await Store.getEmployeeStatus(user.id);
+            const action = currentStatus === 'IN' ? 'OUT' : 'IN';
             const notes = notesInput.value;
             
             await Store.clockAction(user.id, action, notes);
