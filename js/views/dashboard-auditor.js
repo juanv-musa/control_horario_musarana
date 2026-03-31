@@ -49,22 +49,7 @@ export const AuditorDashboard = {
                         </div>
 
                         <div class="table-container" style="background: white;">
-                            <h3 style="margin-bottom: 1rem; color: var(--danger);">🛡️ Historial de Accesos de Inspección</h3>
-                            <table class="table" id="audit-logs-table" style="margin-bottom: 2rem;">
-                                <thead>
-                                    <tr>
-                                        <th>Fecha y Hora</th>
-                                        <th>Inspector</th>
-                                        <th>Acción</th>
-                                        <th>Dispositivo/Navegador</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Filled dynamically -->
-                                </tbody>
-                            </table>
-
-                            <div style="margin: 3rem 0 1.5rem 0; border-top: 2px dashed #E5E7EB; padding-top: 2rem;">
+                            <div style="margin: 0 0 1.5rem 0; border-top: 2px dashed #E5E7EB; padding-top: 2rem;">
                                 <h3 style="margin-bottom: 1rem;">🔍 Búsqueda de Registros Laborales</h3>
                             </div>
 
@@ -177,7 +162,6 @@ export const AuditorDashboard = {
 
         // Initial render
         await applyFilters();
-        await this.renderAuditLogs();
 
         const exportBtn = document.getElementById('btn-export');
         if (exportBtn) {
@@ -191,25 +175,6 @@ export const AuditorDashboard = {
                 return false;
             };
         }
-    },
-
-    async renderAuditLogs() {
-        const tbody = document.querySelector('#audit-logs-table tbody');
-        if (!tbody) return;
-
-        const logs = await Store.getAuditLogs();
-        if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay accesos registrados aún.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = logs.map(l => `
-            <tr>
-                <td style="font-family: monospace;">${new Date(l.created_at).toLocaleString('es-ES')}</td>
-                <td style="font-weight: 500;">${l.auditor_name}</td>
-                <td><span class="badge badge-active">ACCESO PORTAL</span></td>
-                <td style="font-size: 0.75rem; color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${l.user_agent || ''}">${l.user_agent || 'N/A'}</td>
-            </tr>
-        `).join('');
     }
 };
+
