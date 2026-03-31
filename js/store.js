@@ -1,10 +1,11 @@
+import { APP_CONFIG } from './config.js';
+
 // Initialize Supabase client
-const supabaseClient = supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY);
+const supabaseClient = supabase.createClient(APP_CONFIG.supabase.url, APP_CONFIG.supabase.key);
 
 export const Store = {
     // Database initialization
     async init() {
-        // No local init needed anymore, just check session
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
             await this.refreshCurrentUser(session.user.id);
@@ -25,20 +26,13 @@ export const Store = {
         return null;
     },
 
-    // Auth methods
     async login(email, password) {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-        });
-
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
         if (error) {
             this.showToast(error.message, 'error');
             return null;
         }
-
-        const profile = await this.refreshCurrentUser(data.user.id);
-        return profile;
+        return await this.refreshCurrentUser(data.user.id);
     },
 
     async logout() {
@@ -66,12 +60,7 @@ export const Store = {
     },
 
     async updateAuditCode(newCode) {
-        // This is tricky because the Auditor is a different user. 
-        // We'll use a special RPC or just updating the Auditor's record in auth.users 
-        // if we are the admin. However, Supabase Client doesnt allow updating OTHER users' passwords easily.
-        // For this demo/MVP, we'll suggest the admin to manually change it in Supabase Auth Dashboard,
-        // or we'd need an Edge Function.
-        this.showToast('El código se gestiona en el panel de Supabase (User: auditoria@musarana.cloud)', 'info');
+        this.showToast('Actualización manual en el panel de Supabase Auth (auditoria@musarana.cloud)', 'info');
         return true;
     },
 
@@ -80,7 +69,6 @@ export const Store = {
         return data ? JSON.parse(data) : null;
     },
 
-    // User Profile
     async updateProfile(userId, newName, newPassword) {
         const { error: profileError } = await supabaseClient
             .from('profiles')
@@ -100,43 +88,27 @@ export const Store = {
         return true;
     },
 
-    // Admin User CRUD Methods
     async adminGetAllUsers() {
-        const { data, error } = await supabaseClient
-            .from('profiles')
-            .select('*');
+        const { data } = await supabaseClient.from('profiles').select('*');
         return data || [];
     },
 
     async adminSaveUser(userData) {
         if (userData.id) {
-            // Update profile
             const { error } = await supabaseClient
                 .from('profiles')
-                .update({
-                    full_name: userData.name,
-                    role: userData.role
-                })
+                .update({ full_name: userData.name, role: userData.role })
                 .eq('id', userData.id);
-            
             return error ? { success: false, error: error.message } : { success: true };
         } else {
-            // Create user (Note: In a real app, this should be done via Edge Functions or Admin API)
-            // For this demo, we'll use regular signUp. The user will need to confirm email if not disabled.
             const { data, error } = await supabaseClient.auth.signUp({
                 email: userData.username,
                 password: userData.password,
-                options: {
-                    data: {
-                        full_name: userData.name,
-                        role: userData.role
-                    }
-                }
+                options: { data: { full_name: userData.name, role: userData.role } }
             });
 
             if (error) return { success: false, error: error.message };
             
-            // Supabase trigger usually handles profile creation, but if not:
             await supabaseClient.from('profiles').upsert({
                 id: data.user.id,
                 full_name: userData.name,
@@ -148,16 +120,10 @@ export const Store = {
     },
 
     async adminDeleteUser(userId) {
-        // Deleting from Auth requires Admin API. We can "deactivate" in profiles.
-        const { error } = await supabaseClient
-            .from('profiles')
-            .delete()
-            .eq('id', userId);
-        
+        const { error } = await supabaseClient.from('profiles').delete().eq('id', userId);
         return error ? { success: false, error: error.message } : { success: true };
     },
 
-    // Time Tracking Methods
     getAvailableMonths(records) {
         const months = new Set();
         records.forEach(r => {
@@ -166,11 +132,8 @@ export const Store = {
             const mm = String(date.getMonth() + 1).padStart(2, '0');
             months.add(`${yyyy}-${mm}`);
         });
-        
         const now = new Date();
-        const currentYYMM = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-        months.add(currentYYMM);
-        
+        months.add(`${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`);
         return Array.from(months).sort((a,b) => b.localeCompare(a));
     },
 
@@ -183,9 +146,9 @@ export const Store = {
     async calculateMonthlyHours(userId, monthString = null) {
         let year, month;
         if (monthString) {
-            [year, month] = monthString.split('-');
-            year = parseInt(year);
-            month = parseInt(month) - 1;
+            const parts = monthString.split('-');
+            year = parseInt(parts[0]);
+            month = parseInt(parts[1]) - 1;
         } else {
             const now = new Date();
             year = now.getFullYear();
@@ -203,12 +166,27 @@ export const Store = {
             .lte('timestamp', endDate)
             .order('timestamp', { ascending: true });
 
-        if (!monthRecords) return 0;
+        // FIX: Find if there's a preceding 'IN' before this month
+        const { data: precedingRecord } = await supabaseClient
+            .from('time_records')
+            .select('*')
+            .eq('user_id', userId)
+            .lt('timestamp', startDate)
+            .order('timestamp', { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        
+        let allRecords = monthRecords || [];
+        if (precedingRecord && precedingRecord.type === 'IN') {
+            allRecords = [precedingRecord, ...allRecords];
+        }
+
+        if (allRecords.length === 0) return 0;
 
         let totalMs = 0;
         let lastIn = null;
 
-        for (const r of monthRecords) {
+        for (const r of allRecords) {
             if (r.type === 'IN') {
                 lastIn = new Date(r.timestamp);
             } else if (r.type === 'OUT' && lastIn) {
@@ -229,7 +207,6 @@ export const Store = {
 
     async getRecords(filters = {}) {
         let query = supabaseClient.from('time_records').select('*');
-        
         if (filters.userId && filters.userId !== 'ALL') query = query.eq('user_id', filters.userId);
         if (filters.month) {
             const [year, month] = filters.month.split('-');
@@ -237,24 +214,23 @@ export const Store = {
             const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
             query = query.gte('timestamp', startDate).lte('timestamp', endDate);
         }
-
-        const { data, error } = await query.order('timestamp', { ascending: false });
+        const { data } = await query.order('timestamp', { ascending: false });
         return data || [];
     },
 
     async clockAction(userId, type, notes = '') {
         const user = this.getUser();
-        const { data, error } = await supabaseClient
+        const { data } = await supabaseClient
             .from('time_records')
             .insert({
                 user_id: userId,
                 user_name: user.full_name,
                 type,
+                timestamp: new Date().toISOString(), // Usar hora cliente para sincronizar cronómetro
                 notes: notes.trim()
             })
             .select()
             .single();
-        
         return data;
     },
 
@@ -267,7 +243,6 @@ export const Store = {
                 notes: (newData.notes || '').trim()
             })
             .eq('id', recordId);
-        
         return !error;
     },
 
@@ -281,7 +256,6 @@ export const Store = {
                 type: type,
                 notes: (notes || '').trim()
             });
-        
         return !error;
     },
 
@@ -293,7 +267,6 @@ export const Store = {
             .order('timestamp', { ascending: false })
             .limit(1)
             .single();
-        
         return data ? data.type : 'OUT';
     },
 
@@ -313,17 +286,12 @@ export const Store = {
         const [year, month] = monthYear.split('-');
         const startDate = new Date(year, month - 1, 1).toISOString();
         const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
-
         const { error } = await supabaseClient
             .from('time_records')
-            .update({ 
-                is_validated: true, 
-                validation_date: new Date().toISOString() 
-            })
+            .update({ is_validated: true, validation_date: new Date().toISOString() })
             .eq('user_id', userId)
             .gte('timestamp', startDate)
             .lte('timestamp', endDate);
-        
         return !error;
     },
 
@@ -331,26 +299,18 @@ export const Store = {
         const [year, month] = monthYear.split('-');
         const startDate = new Date(year, month - 1, 1).toISOString();
         const endDate = new Date(year, month, 0, 23, 59, 59).toISOString();
-
         const { error } = await supabaseClient
             .from('time_records')
-            .update({ 
-                is_company_validated: true, 
-                company_validation_date: new Date().toISOString() 
-            })
+            .update({ is_company_validated: true, company_validation_date: new Date().toISOString() })
             .eq('user_id', userId)
             .gte('timestamp', startDate)
             .lte('timestamp', endDate);
-        
         return !error;
     },
 
     async getDashboardStats() {
-        // Fetch all profiles to find employees
         const profiles = await this.adminGetAllUsers();
         const employees = profiles.filter(p => p.role === 'employee');
-
-        // Fetch today's records
         const today = new Date().toISOString().split('T')[0];
         const { data: todayRecords } = await supabaseClient
             .from('time_records')
@@ -358,20 +318,14 @@ export const Store = {
             .gte('timestamp', `${today}T00:00:00Z`)
             .lte('timestamp', `${today}T23:59:59Z`);
 
-        // Count active workers (last record is IN)
         let activeCount = 0;
         for (const emp of employees) {
             const status = await this.getEmployeeStatus(emp.id);
             if (status === 'IN') activeCount++;
         }
-
-        return {
-            todayRecords: todayRecords ? todayRecords.length : 0,
-            activeCount
-        };
+        return { todayRecords: todayRecords ? todayRecords.length : 0, activeCount };
     },
 
-    // Audit Logging
     async logAuditAccess(auditorName) {
         try {
             await supabaseClient.from('audit_logs').insert({
@@ -380,7 +334,7 @@ export const Store = {
                 user_agent: navigator.userAgent
             });
         } catch (e) {
-            console.warn('Audit table may not exist yet:', e);
+            console.warn('Audit table Error:', e);
         }
     },
 
@@ -392,77 +346,40 @@ export const Store = {
         return data || [];
     },
 
-    // Notifications (Toast)
     showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         if (!container) return;
-
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `
-            <span>${message}</span>
-            <button class="logout-btn" onclick="this.parentElement.remove()" style="margin-left: 1rem">&times;</button>
-        `;
-        
+        toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" style="margin-left:1rem;background:none;border:none;color:inherit;cursor:pointer;">&times;</button>`;
         container.appendChild(toast);
-        setTimeout(() => {
-            if (toast.parentElement) toast.remove();
-        }, 3000);
+        setTimeout(() => toast.remove(), 3000);
     },
 
     async exportEmployeeCSV(empId, monthId) {
         const records = await this.getRecords({ userId: empId, month: monthId === 'ALL' ? null : monthId });
         const users = await this.adminGetAllUsers();
-        
-        let filename = `auditoria_MUSARAÑA`;
-        if (empId !== 'ALL') {
-            const empName = users.find(u => u.id === empId)?.full_name.replace(/\s+/g, '_') || empId;
-            filename += `_${empName}`;
-        }
-        filename += `_${monthId}.csv`;
-
+        let filename = `auditoria_${APP_CONFIG.name}_${monthId}.csv`;
         if (records.length === 0) {
             this.showToast('No hay registros para exportar', 'error');
             return;
         }
 
-        const headers = ["ID Registro", "Empleado", "Marca de Tiempo (ISO)", "Tipo", "Observaciones", "Firma Empleado", "Firma Empresa"];
+        const headers = ["ID Registro", "Empleado", "Timestamp", "Tipo", "Notas", "Firma Empleado", "Firma Empresa"];
         const csvRows = [headers.join(',')];
-        
         records.forEach(r => {
-            csvRows.push([
-                r.id,
-                `"${r.user_name}"`,
-                r.timestamp,
-                r.type,
-                `"${r.notes || ''}"`,
-                r.is_validated ? 'SI' : 'NO',
-                r.is_company_validated ? 'SI' : 'NO'
-            ].join(','));
+            csvRows.push([r.id, `"${r.user_name}"`, r.timestamp, r.type, `"${r.notes || ''}"`, r.is_validated ? 'SI' : 'NO', r.is_company_validated ? 'SI' : 'NO'].join(','));
         });
 
-        // Add Legal Summary at the end for single-employee/month exports
         if (empId !== 'ALL') {
             const hours = await this.calculateMonthlyHours(empId, monthId === 'ALL' ? null : monthId);
             const firstRec = records[0] || {};
-            
-            csvRows.push('');
-            csvRows.push('--- RESUMEN LEGAL DE AUDITORÍA ---');
-            csvRows.push(`"TOTAL HORAS TRABAJADAS (PERIODO)","${this.formatTime(hours)}"`);
-            
-            const empCert = (firstRec && firstRec.is_validated)
-                ? `VALIDADO POR EMPLEADO EL ${new Date(firstRec.validation_date).toLocaleString('es-ES')}`
-                : 'PENDIENTE DE VALIDACIÓN POR EMPLEADO';
-            csvRows.push(`"Certificación Empleado","${empCert}"`);
-            
-            const compCert = (firstRec && firstRec.is_company_validated)
-                ? `VALIDADO POR EMPRESA EL ${new Date(firstRec.company_validation_date).toLocaleString('es-ES')}`
-                : 'PENDIENTE DE REVISIÓN EMPRESARIAL';
-            csvRows.push(`"Certificación Empresa","${compCert}"`);
-            
-            csvRows.push('');
+            csvRows.push('', '--- RESUMEN LEGAL DE AUDITORÍA ---');
+            csvRows.push(`"TOTAL HORAS TRABAJADAS","${this.formatTime(hours)}"`);
+            csvRows.push(`"Certificación Empleado","${firstRec.is_validated ? 'VALIDADO EL ' + new Date(firstRec.validation_date).toLocaleString() : 'PENDIENTE'}"`);
+            csvRows.push(`"Certificación Empresa","${firstRec.is_company_validated ? 'VALIDADO EL ' + new Date(firstRec.company_validation_date).toLocaleString() : 'PENDIENTE'}"`);
             csvRows.push(`"Generado por","${this.getUser()?.full_name || 'Sistema'}"`);
-            csvRows.push(`"Fecha de Reporte","${new Date().toLocaleString('es-ES')}"`);
+            csvRows.push(`"Fecha de Reporte","${new Date().toLocaleString()}"`);
         }
 
         const blob = new Blob(["\ufeff" + csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
@@ -471,7 +388,6 @@ export const Store = {
         link.href = url;
         link.download = filename;
         link.click();
-        
         this.showToast('Reporte generado correctamente');
     }
 };

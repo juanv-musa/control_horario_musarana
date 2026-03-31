@@ -1,17 +1,14 @@
 import { Store } from '../store.js';
+import { APP_CONFIG } from '../config.js';
 
 export const AuditorDashboard = {
     render() {
         const user = Store.getUser();
         if (!user) return '';
-
         return `
             <div style="width: 100%;">
                 <nav class="navbar" style="background: rgba(239, 68, 68, 0.05);">
-                    <div class="nav-brand">
-                        <img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"> 
-                        <span style="font-size: 0.9rem; margin-left: 1rem; color: var(--danger); font-weight: 700; border-left: 2px solid var(--danger); padding-left: 1rem;">ACCESO AUDITORÍA</span>
-                    </div>
+                    <div class="nav-brand"><img src="${APP_CONFIG.logo}" alt="${APP_CONFIG.name}" style="height: 48px;"> <span style="font-size: 0.9rem; margin-left:1rem; color:var(--danger); font-weight:700;">ACCESO AUDITORÍA</span></div>
                     <div class="user-info">
                         <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #FEF2F2; color: #DC2626; border: none; font-size: 0.85rem;">📖 Manual</a>
                         <span class="user-role" style="background: #FEE2E2; color: #991B1B;">Auditoría</span>
@@ -21,195 +18,69 @@ export const AuditorDashboard = {
                 </nav>
                 <div class="container mt-6">
                     <div class="glass-panel" style="padding: 2.5rem;">
-                        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
-                            <h2 style="margin-bottom: 0.5rem;">Auditoría de Cumplimiento Laboral</h2>
-                            <p class="text-secondary" style="margin-top: 0;">Portal de acceso para la auditoría de trabajo. Registros conforme al Art. 34.9 ET.</p>
-                        </div>
-                        
-                        <div class="dashboard-grid" style="align-items: end; margin-bottom: 2.5rem; background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md);">
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Filtrar Empleado</label>
-                                <select id="export-filter-employee" class="form-control" style="background: white;">
-                                    <option value="ALL">Todos los Empleados registrados</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Periodo Mensual</label>
-                                <select id="export-filter-month" class="form-control" style="background: white;">
-                                    <option value="ALL">Todo el historial (Advertencia: Lento)</option>
-                                    <!-- Filled dynamically -->
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" id="btn-export" style="height: 42px; width: 100%;">Generar Reporte Firma</button>
-                        </div>
-                        
-                        <div id="audit-summary-container" style="display: none; background: #DBEAFE; color: #1E40AF; padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid #BFDBFE;">
-                            <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 0.25rem;">CÓMPUTO TOTAL DEL PERIODO</div>
-                            <span id="audit-monthly-hours" style="font-weight: 800; font-size: 1.5rem;">0h 0m</span>
-                        </div>
-
+                        <h3 style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">🛡️ Historial de Accesos de Inspección</h3>
                         <div class="table-container" style="background: white;">
-                            <h3 style="margin-bottom: 1rem; color: var(--danger);">🛡️ Historial de Accesos de Inspección</h3>
                             <table class="table" id="audit-logs-table" style="margin-bottom: 2rem;">
                                 <thead>
-                                    <tr>
-                                        <th>Fecha y Hora</th>
-                                        <th>Inspector</th>
-                                        <th>Acción</th>
-                                        <th>Dispositivo/Navegador</th>
-                                    </tr>
+                                    <tr><th>Fecha y Hora</th><th>Inspector</th><th>Acción</th><th>Dispositivo/Navegador</th></tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Filled dynamically -->
-                                </tbody>
+                                <tbody></tbody>
                             </table>
-
-                            <div style="margin: 3rem 0 1.5rem 0; border-top: 2px dashed #E5E7EB; padding-top: 2rem;">
-                                <h3 style="margin-bottom: 1rem;">🔍 Búsqueda de Registros Laborales</h3>
-                            </div>
-
+                        </div>
+                        <div style="margin: 3rem 0; border-top: 2px dashed #E5E7EB; padding-top: 2rem;">
+                            <h3>🔍 Búsqueda de Registros Laborales</h3>
+                        </div>
+                        <div class="dashboard-grid" style="align-items: end; margin-bottom: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 1rem;">
+                            <div class="form-group"><label class="form-label">Empleado</label><select id="export-filter-employee" class="form-control"></select></div>
+                            <div class="form-group"><label class="form-label">Mes</label><select id="export-filter-month" class="form-control"></select></div>
+                            <button class="btn btn-primary" id="btn-export" style="height: 42px;">Generar Reporte Firma</button>
+                        </div>
+                        <div class="table-container" style="background: white;">
                             <table class="table" id="audit-records">
                                 <thead>
-                                    <tr>
-                                        <th>ID Registro</th>
-                                        <th>Empleado</th>
-                                        <th>Fecha/Hora (ISO)</th>
-                                        <th>Acción</th>
-                                        <th>Firma Empleado</th>
-                                        <th>Firma Empresa</th>
-                                    </tr>
+                                    <tr><th>ID Registro</th><th>Empleado</th><th>Fecha/Hora (ISO)</th><th>Acción</th><th>Firma Empleado</th><th>Firma Empresa</th></tr>
                                 </thead>
-                                <tbody>
-                                    <!-- Filled dynamically -->
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
                 <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
-                    <p>Musaraña &copy; 2026</p>
+                    <p>${APP_CONFIG.footer}</p>
                 </footer>
             </div>
         `;
     },
-
     async init() {
-        const tbody = document.querySelector('#audit-records tbody');
-        if (!tbody) return;
-
-        // Fetch initialization data
-        const allRecords = await Store.getRecords();
-        const employees = (await Store.adminGetAllUsers()).filter(u => u.role === 'employee');
-        const availableMonths = Store.getAvailableMonths(allRecords);
-
-        // Populate filter dropdowns
+        const tbodyLogs = document.querySelector('#audit-logs-table tbody');
+        const tbodyRecords = document.querySelector('#audit-records tbody');
         const selectEmployee = document.getElementById('export-filter-employee');
         const selectMonth = document.getElementById('export-filter-month');
-        
-        if (selectEmployee) {
-            selectEmployee.innerHTML = '<option value="ALL">Todos los Empleados registrados</option>';
-            employees.forEach(emp => {
-                const opt = document.createElement('option');
-                opt.value = emp.id;
-                opt.textContent = emp.full_name;
-                selectEmployee.appendChild(opt);
-            });
-        }
 
-        if (selectMonth && availableMonths.length > 0) {
-            selectMonth.innerHTML = availableMonths.map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
-            selectMonth.value = availableMonths[0];
-        }
-
-        const applyFilters = async () => {
-            const empId = selectEmployee ? selectEmployee.value : 'ALL';
-            const monthId = selectMonth ? selectMonth.value : 'ALL';
-            
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Consultando nube...</td></tr>';
-            
-            const filteredRecords = await Store.getRecords({ 
-                userId: empId, 
-                month: monthId === 'ALL' ? null : monthId 
-            });
-
-            if (filteredRecords.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center text-secondary">No hay registros para los criterios seleccionados.</td></tr>';
-            } else {
-                tbody.innerHTML = filteredRecords.map(r => {
-                    const rDate = new Date(r.timestamp);
-                    return `
-                    <tr>
-                        <td style="font-size: 0.7rem; font-family: monospace; color: var(--text-secondary);">${r.id.split('-')[0]}...</td>
-                        <td style="font-weight: 500;">${r.user_name}</td>
-                        <td style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
-                        <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
-                        <td>
-                            ${r.is_validated 
-                                ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}
-                        </td>
-                        <td>
-                            ${r.is_company_validated 
-                                ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
-                                : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}
-                        </td>
-                    </tr>
-                `}).join('');
-            }
-
-            const summaryContainer = document.getElementById('audit-summary-container');
-            const summaryText = document.getElementById('audit-monthly-hours');
-
-            if (empId !== 'ALL' && monthId !== 'ALL') {
-                if (summaryContainer && summaryText) {
-                    const hours = await Store.calculateMonthlyHours(empId, monthId);
-                    summaryText.textContent = Store.formatTime(hours);
-                    summaryContainer.style.display = 'block';
-                }
-            } else {
-                if (summaryContainer) summaryContainer.style.display = 'none';
-            }
+        const renderAuditLogs = async () => {
+            const logs = await Store.getAuditLogs();
+            tbodyLogs.innerHTML = logs.map(l => `<tr><td style="font-family:monospace;">${new Date(l.created_at).toLocaleString()}</td><td style="font-weight:500;">${l.auditor_name}</td><td><span class="badge badge-active">ACCESO PORTAL</span></td><td style="font-size: 0.75rem;">${l.user_agent}</td></tr>`).join('');
         };
 
-        if (selectEmployee) selectEmployee.addEventListener('change', applyFilters);
-        if (selectMonth) selectMonth.addEventListener('change', applyFilters);
+        const renderRecordsTable = async () => {
+            const empId = selectEmployee.value;
+            const month = selectMonth.value;
+            const records = await Store.getRecords({ userId: empId, month: month === 'ALL' ? null : month });
+            tbodyRecords.innerHTML = records.map(r => `<tr><td style="font-size:0.7rem;">${r.id.split('-')[0]}...</td><td>${r.user_name}</td><td style="font-family:monospace;">${new Date(r.timestamp).toLocaleString()}</td><td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type}</span></td><td>${r.is_validated ? '✔ SI' : '⌛ PENDIENTE'}</td><td>${r.is_company_validated ? '✔ SI' : '⌛ PENDIENTE'}</td></tr>`).join('');
+        };
 
-        // Initial render
-        await applyFilters();
-        await this.renderAuditLogs();
+        const records = await Store.getRecords();
+        const availableMonths = Store.getAvailableMonths(records);
+        const employees = (await Store.adminGetAllUsers()).filter(u => u.role === 'employee');
 
-        const exportBtn = document.getElementById('btn-export');
-        if (exportBtn) {
-            // Remove any old listener just in case (though SPA re-renders usually clean headers)
-            exportBtn.onclick = async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const empId = selectEmployee ? selectEmployee.value : 'ALL';
-                const monthId = selectMonth ? selectMonth.value : 'ALL';
-                await Store.exportEmployeeCSV(empId, monthId);
-                return false;
-            };
-        }
-    },
+        selectEmployee.innerHTML = '<option value="ALL">Todos los Empleados registrados</option>' + employees.map(emp => `<option value="${emp.id}">${emp.full_name}</option>`).join('');
+        selectMonth.innerHTML = availableMonths.map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
+        
+        selectEmployee.addEventListener('change', renderRecordsTable);
+        selectMonth.addEventListener('change', renderRecordsTable);
+        document.getElementById('btn-export').addEventListener('click', async () => await Store.exportEmployeeCSV(selectEmployee.value, selectMonth.value));
 
-    async renderAuditLogs() {
-        const tbody = document.querySelector('#audit-logs-table tbody');
-        if (!tbody) return;
-
-        const logs = await Store.getAuditLogs();
-        if (logs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay accesos registrados aún.</td></tr>';
-            return;
-        }
-
-        tbody.innerHTML = logs.map(l => `
-            <tr>
-                <td style="font-family: monospace;">${new Date(l.created_at).toLocaleString('es-ES')}</td>
-                <td style="font-weight: 500;">${l.auditor_name}</td>
-                <td><span class="badge badge-active">ACCESO PORTAL</span></td>
-                <td style="font-size: 0.75rem; color: var(--text-secondary); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${l.user_agent || ''}">${l.user_agent || 'N/A'}</td>
-            </tr>
-        `).join('');
+        renderAuditLogs();
+        renderRecordsTable();
     }
 };
