@@ -61,25 +61,22 @@ export const EmployeeDashboard = {
         const profileForm = document.getElementById('profile-form');
         let timerInterval;
 
-        const updateUI = async (forcedStatus, latestRecord = null) => {
+        const updateUI = async (forcedStatus) => {
             const currentStatus = forcedStatus || await Store.getEmployeeStatus(user.id);
             const isWorking = (currentStatus === 'IN');
             
-            if (timerInterval) clearInterval(timerInterval);
-
             if (isWorking) {
                 btnClock.textContent = 'DETENER REGISTRO';
                 btnClock.style.background = 'var(--danger)';
                 btnClock.style.boxShadow = '0 10px 25px rgba(239, 68, 68, 0.3)';
                 statusContainer.innerHTML = '<span class="badge badge-active" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● TRABAJANDO</span>';
                 timerDisplay.style.display = 'block';
-
-                const lastIn = latestRecord || await Store.getLastClockIn(user.id);
+                const lastIn = await Store.getLastClockIn(user.id);
                 if (lastIn) {
                     const startTime = new Date(lastIn.timestamp);
                     const startTimer = () => {
                         const now = new Date();
-                        const diff = Math.max(0, now - startTime);
+                        const diff = now - startTime;
                         const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
                         const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
                         const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
@@ -94,6 +91,7 @@ export const EmployeeDashboard = {
                 btnClock.style.boxShadow = '0 10px 25px rgba(140, 198, 63, 0.3)';
                 statusContainer.innerHTML = '<span class="badge badge-inactive" style="padding: 0.5rem 1rem; font-size: 0.9rem;">● FUERA DE JORNADA</span>';
                 timerDisplay.style.display = 'none';
+                if (timerInterval) clearInterval(timerInterval);
             }
         };
 
@@ -104,11 +102,7 @@ export const EmployeeDashboard = {
             const action = currentStatus === 'IN' ? 'OUT' : 'IN';
             const notes = document.getElementById('clock-notes').value;
             const res = await Store.clockAction(user.id, action, notes);
-            if (res) { 
-                Store.showToast(action === 'IN' ? 'Entrada registrada' : 'Salida registrada'); 
-                updateUI(action, res); 
-                document.getElementById('clock-notes').value = ''; 
-            }
+            if (res) { Store.showToast(action === 'IN' ? 'Entrada registrada' : 'Salida registrada'); updateUI(action); document.getElementById('clock-notes').value = ''; }
         };
 
         if (profileForm) profileForm.addEventListener('submit', async (e) => {

@@ -166,27 +166,12 @@ export const Store = {
             .lte('timestamp', endDate)
             .order('timestamp', { ascending: true });
 
-        // FIX: Find if there's a preceding 'IN' before this month
-        const { data: precedingRecord } = await supabaseClient
-            .from('time_records')
-            .select('*')
-            .eq('user_id', userId)
-            .lt('timestamp', startDate)
-            .order('timestamp', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-        
-        let allRecords = monthRecords || [];
-        if (precedingRecord && precedingRecord.type === 'IN') {
-            allRecords = [precedingRecord, ...allRecords];
-        }
-
-        if (allRecords.length === 0) return 0;
+        if (!monthRecords) return 0;
 
         let totalMs = 0;
         let lastIn = null;
 
-        for (const r of allRecords) {
+        for (const r of monthRecords) {
             if (r.type === 'IN') {
                 lastIn = new Date(r.timestamp);
             } else if (r.type === 'OUT' && lastIn) {
@@ -226,7 +211,6 @@ export const Store = {
                 user_id: userId,
                 user_name: user.full_name,
                 type,
-                timestamp: new Date().toISOString(), // Usar hora cliente para sincronizar cronómetro
                 notes: notes.trim()
             })
             .select()
