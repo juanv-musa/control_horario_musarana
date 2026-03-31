@@ -1,4 +1,5 @@
 import { Store } from '../store.js';
+import { Router } from '../router.js';
 import { APP_CONFIG } from '../config.js';
 
 export const EmployerDashboard = {
@@ -20,43 +21,85 @@ export const EmployerDashboard = {
                     <div class="dashboard-grid mb-6">
                         <div class="stat-card" style="background: linear-gradient(135deg, #8CC63F 0%, #7EAD36 100%); color: white; border: none;">
                             <h4 style="opacity: 0.9; font-size: 0.85rem; text-transform: uppercase;">EMPLEADOS ACTIVOS</h4>
-                            <div id="stat-active" style="font-size: 2.5rem; font-weight: 800; margin-top: 0.5rem;">...</div>
+                            <div id="stat-active" style="font-size: 2.5rem; font-weight: 800; margin-top: 0.5rem;">Cargando...</div>
                         </div>
                         <div class="stat-card">
                             <h4 style="color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">REGISTROS HOY</h4>
-                            <div id="stat-today" style="font-size: 2.5rem; font-weight: 800; margin-top: 0.5rem;">...</div>
+                            <div id="stat-today" style="font-size: 2.5rem; font-weight: 800; margin-top: 0.5rem; color: var(--text-primary);">Cargando...</div>
                         </div>
                     </div>
                     <div class="glass-panel" style="padding: 2.5rem;">
-                        <h2 style="margin-bottom: 2rem;">Gestión de Registro Horario</h2>
-                        <select id="month-filter" class="form-control" style="width: auto; min-width: 200px; margin-bottom: 2rem;"></select>
-                        <table class="table" id="records-table">
-                            <thead><tr><th>Empleado</th><th>Fecha/Hora</th><th>Acción</th><th>Notas</th><th>Firma</th><th>Acción Empresa</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+                            <h2 style="margin: 0;">Gestión de Registro Horario</h2>
+                            <div style="display: flex; gap: 1rem;">
+                                <select id="month-filter" class="form-control" style="width: auto; min-width: 200px; padding: 0.5rem 1rem;"></select>
+                            </div>
+                        </div>
+                        <div class="table-container" style="background: white;">
+                            <table class="table" id="records-table">
+                                <thead>
+                                    <tr>
+                                        <th>Empleado</th>
+                                        <th>Fecha/Hora</th>
+                                        <th>Acción</th>
+                                        <th>Notas</th>
+                                        <th>Estado Firma</th>
+                                        <th>Validación Empresa</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem;"><p>${APP_CONFIG.footer}</p></footer>
+                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
+                    <p>${APP_CONFIG.footer}</p>
+                </footer>
             </div>
         `;
     },
     async init() {
         const tbody = document.querySelector('#records-table tbody');
         const monthFilter = document.getElementById('month-filter');
-        const stats = await Store.getDashboardStats();
-        document.getElementById('stat-active').textContent = stats.activeCount;
-        document.getElementById('stat-today').textContent = stats.todayRecords;
+        const statActive = document.getElementById('stat-active');
+        const statToday = document.getElementById('stat-today');
+
+        const updateStats = async () => {
+            const stats = await Store.getDashboardStats();
+            statActive.textContent = stats.activeCount;
+            statToday.textContent = stats.todayRecords;
+        };
 
         const renderTable = async () => {
-            const records = await Store.getRecords({ month: monthFilter.value });
+            const month = monthFilter.value;
+            const records = await Store.getRecords({ month });
             tbody.innerHTML = records.map(r => `
-                <tr><td>${r.user_name}</td><td>${new Date(r.timestamp).toLocaleString()}</td><td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type}</span></td><td>${r.notes || '-'}</td><td>${r.is_validated ? '✔' : '⌛'}</td><td>${r.is_company_validated ? 'VALIDADO' : `<button onclick="validateRow('${r.user_id}', '${monthFilter.value}')">Validar</button>`}</td></tr>
+                <tr>
+                    <td>${r.user_name}</td>
+                    <td style="font-family:monospace;">${new Date(r.timestamp).toLocaleString()}</td>
+                    <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
+                    <td style="font-size:0.85rem;">${r.notes || '-'}</td>
+                    <td>${r.is_validated ? '✔ SI' : '⌛ PENDIENTE'}</td>
+                    <td>
+                        ${r.is_company_validated 
+                            ? '<span style="color:#6366F1;">✔ VALIDADO</span>' 
+                            : `<button class="btn btn-secondary btn-sm" onclick="validateRow('${r.user_id}', '${month}')">Validar Mes</button>`}
+                    </td>
+                </tr>
             `).join('');
         };
-        window.validateRow = async (uid, m) => { if (await Store.companyValidateMonth(uid, m)) renderTable(); };
-        const recs = await Store.getRecords();
-        monthFilter.innerHTML = Store.getAvailableMonths(recs).map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
+
+        window.validateRow = async (uid, month) => {
+            const res = await Store.companyValidateMonth(uid, month);
+            if (res) { Store.showToast('Mes validado correctamente'); renderTable(); }
+        };
+
+        const records = await Store.getRecords();
+        const availableMonths = Store.getAvailableMonths(records);
+        monthFilter.innerHTML = availableMonths.map(m => `<option value="${m}">${Store.formatMonthLabel(m)}</option>`).join('');
         monthFilter.addEventListener('change', renderTable);
+
+        updateStats();
         renderTable();
     }
 };

@@ -1,9 +1,9 @@
 export const APP_CONFIG = {
-    name: 'Nombre Empresa',
+    name: 'Musaraña',
     logo: 'assets/logo.png',
-    footer: '© 2026 Registro de Jornada',
+    footer: 'Musaraña &copy; 2026',
     supabase: {
-        url: 'https://TU_PROYECTO.supabase.co',
-        key: 'TU_API_KEY'
+        url: 'https://jronohxljvanawpyuctb.supabase.co',
+        key: 'sb_publishable_AJOyDQKymOUlvlGxfOmNkQ_fi8g3jGY'
     }
 };
