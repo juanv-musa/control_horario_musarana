@@ -27,29 +27,45 @@ export const Router = {
         const app = document.getElementById('app');
         const user = Store.getUser();
 
-        // Guards
-        if (path !== '/' && !user) return this.navigate('/');
-        if (path === '/' && user) {
-            if (user.role === 'employee') return this.navigate('/employee');
-            if (user.role === 'employer') return this.navigate('/employer');
-            if (user.role === 'auditor') return this.navigate('/auditor');
+        console.log(`Navigating to ${path}`, user);
+
+        // Security / Guards
+        if (path !== '/' && !user) {
+            console.warn('Unauthorized routing attempt. Redirecting to login.');
+            this.navigate('/');
+            return;
         }
 
+        if (path === '/' && user) {
+            // Re-route logged in users away from login
+            if (user.role === 'employee') this.navigate('/employee');
+            else if (user.role === 'employer') this.navigate('/employer');
+            else if (user.role === 'auditor') this.navigate('/auditor');
+            return;
+        }
+        
         // Role check
         if (user) {
-            if (path === '/employee' && user.role !== 'employee') return this.navigate('/');
-            if (path === '/employer' && user.role !== 'employer') return this.navigate('/');
-            if (path === '/auditor' && user.role !== 'auditor') return this.navigate('/');
+             if (path === '/employee' && user.role !== 'employee') return this.navigate('/');
+             if (path === '/employer' && user.role !== 'employer') return this.navigate('/');
+             if (path === '/auditor' && user.role !== 'auditor') return this.navigate('/');
         }
 
         const component = this.routes[path];
         if (component) {
+            // Destroy phase for previous components (if needed, simplified here)
             app.innerHTML = component.render();
-            if (component.init) setTimeout(() => component.init(), 0);
+            if (component.init) {
+                // Async initialization inside setTimeout to assure DOM is ready
+                setTimeout(() => component.init(), 0);
+            }
         } else {
-            app.innerHTML = '<h2>404 - No Encontrado</h2>';
+            app.innerHTML = '<h2>404 - Page Not Found</h2>';
         }
     }
 };
 
-window.addEventListener('popstate', () => Router.render());
+// Listen to back/forward buttons
+window.addEventListener('popstate', () => {
+    Router.render();
+});

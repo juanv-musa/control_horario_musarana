@@ -3,21 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Jornada Laboral</title>
+    <title>Registro Horario y Cumplimiento Laboral</title>
+    <meta name="description" content="Sistema de registro horario para trabajadores y portal de auditoría de cumplimiento laboral.">
+    
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        window.SUPABASE_URL = "https://jronohxljvanawpyuctb.supabase.co";
+        window.SUPABASE_KEY = "sb_publishable_AJOyDQKymOUlvlGxfOmNkQ_fi8g3jGY";
+    </script>
 </head>
 <body>
     <div id="background-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
-    <div id="app"></div>
-    <div id="toast-container" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;"></div>
+    
+    <main id="app">
+        <!-- Views will be injected here by the router -->
+    </main>
+
+    <!-- Notification Container (Toast) -->
+    <div id="toast-container"></div>
+
+    <!-- Main entry point -->
     <script type="module" src="js/app.js"></script>
 </body>
 </html>
