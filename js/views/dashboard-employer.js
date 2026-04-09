@@ -298,7 +298,9 @@ export const EmployerDashboard = {
 
         const btnDeleteUser = document.getElementById('btn-delete-user');
         if (btnDeleteUser) {
-            btnDeleteUser.addEventListener('click', async () => {
+            btnDeleteUser.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const id = document.getElementById('nu-id').value;
                 if (!id) return;
                 
@@ -365,7 +367,9 @@ export const EmployerDashboard = {
 
         const btnDeleteRecord = document.getElementById('btn-delete-record');
         if (btnDeleteRecord) {
-            btnDeleteRecord.addEventListener('click', async () => {
+            btnDeleteRecord.addEventListener('click', async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const id = document.getElementById('rf-id').value;
                 if (!id) return;
                 
@@ -525,6 +529,8 @@ export const EmployerDashboard = {
 
         document.querySelectorAll('.btn-delete-record-direct').forEach(btn => {
             btn.onclick = async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const id = btn.getAttribute('data-id');
                 if (confirm('¿Estás seguro de que deseas eliminar este registro por completo? Esta acción no se puede deshacer.')) {
                     btn.disabled = true;
