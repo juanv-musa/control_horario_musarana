@@ -285,6 +285,19 @@ export const Store = {
         return !error;
     },
 
+    async adminDeleteRecord(recordId) {
+        const { error } = await supabaseClient
+            .from('time_records')
+            .delete()
+            .eq('id', recordId);
+        
+        if (error) {
+            console.error("Supabase Delete Error:", error);
+            this.showToast("Error BD: " + error.message, 'error');
+        }
+        return !error;
+    },
+
     async getEmployeeStatus(userId) {
         const { data } = await supabaseClient
             .from('time_records')

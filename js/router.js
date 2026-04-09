@@ -1,11 +1,11 @@
-import { Store } from './store.js';
+import { Store } from './store.js?v=999';
 
 // Import Views
-import { LoginView } from './views/login.js';
-import { EmployeeDashboard } from './views/dashboard-employee.js';
-import { EmployerDashboard } from './views/dashboard-employer.js';
-import { AuditorDashboard } from './views/dashboard-auditor.js';
-import { ManualView } from './views/manual-view.js';
+import { LoginView } from './views/login.js?v=999';
+import { EmployeeDashboard } from './views/dashboard-employee.js?v=999';
+import { EmployerDashboard } from './views/dashboard-employer.js?v=999';
+import { AuditorDashboard } from './views/dashboard-auditor.js?v=999';
+import { ManualView } from './views/manual-view.js?v=999';
 
 export const Router = {
     routes: {
@@ -57,7 +57,8 @@ export const Router = {
             app.innerHTML = component.render();
             if (component.init) {
                 // Async initialization inside setTimeout to assure DOM is ready
-                setTimeout(() => component.init(), 0);
+                if (window.__initTimeout) clearTimeout(window.__initTimeout);
+                window.__initTimeout = setTimeout(() => component.init(), 50);
             }
         } else {
             app.innerHTML = '<h2>404 - Page Not Found</h2>';

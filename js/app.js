@@ -1,5 +1,5 @@
-import { Store } from './store.js';
-import { Router } from './router.js';
+import { Store } from './store.js?v=999';
+import { Router } from './router.js?v=999';
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('App Initialized. Checking user session...');

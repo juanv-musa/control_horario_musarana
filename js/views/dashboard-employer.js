@@ -1,5 +1,5 @@
-import { Store } from '../store.js';
-import { Router } from '../router.js';
+import { Store } from '../store.js?v=999';
+import { Router } from '../router.js?v=999';
 
 export const EmployerDashboard = {
     render() {
@@ -64,9 +64,10 @@ export const EmployerDashboard = {
                                         <option value="auditor">Auditoría (Lectura Legal)</option>
                                     </select>
                                 </div>
-                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
                                     <button type="submit" class="btn btn-primary" id="nu-submit">Guardar Usuario</button>
                                     <button type="button" class="btn" id="btn-cancel-new-user" style="background: white; border: 1px solid var(--border);">Cancelar</button>
+                                    <button type="button" class="btn" id="btn-delete-user" style="background: var(--danger); color: white; display: none; margin-left: auto;" title="Eliminar usuario">Dar de Baja</button>
                                 </div>
                             </form>
                         </div>
@@ -126,9 +127,10 @@ export const EmployerDashboard = {
                                     <label class="form-label">Observación Corporativa</label>
                                     <input type="text" id="rf-notes" class="form-control" placeholder="Ej: Olvido de fichaje">
                                 </div>
-                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
                                     <button type="submit" class="btn btn-primary" style="background: #4F46E5;">Guardar Cambios</button>
                                     <button type="button" class="btn" id="btn-cancel-record" style="background: white; border: 1px solid var(--border);">Cancelar</button>
+                                    <button type="button" class="btn" id="btn-delete-record" style="background: var(--danger); color: white; display: none; margin-left: auto;">Eliminar</button>
                                 </div>
                             </form>
                         </div>
@@ -141,7 +143,7 @@ export const EmployerDashboard = {
                                         <th>Fecha/Hora</th>
                                         <th>Acción</th>
                                         <th>Observaciones</th>
-                                        <th style="text-align: right;">Corregir</th>
+                                        <th style="text-align: right;">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -258,6 +260,9 @@ export const EmployerDashboard = {
                 document.getElementById('new-user-title').textContent = 'Alta de Usuario';
                 formContainer.style.display = 'block';
                 toggleBtn.style.display = 'none';
+                
+                const btnDeleteUser = document.getElementById('btn-delete-user');
+                if (btnDeleteUser) btnDeleteUser.style.display = 'none';
             });
         }
 
@@ -291,6 +296,35 @@ export const EmployerDashboard = {
             });
         }
 
+        const btnDeleteUser = document.getElementById('btn-delete-user');
+        if (btnDeleteUser) {
+            btnDeleteUser.addEventListener('click', async () => {
+                const id = document.getElementById('nu-id').value;
+                if (!id) return;
+                
+                if (confirm('¿Estás seguro de que deseas dar de baja y eliminar a este empleado de MUSARAÑA? Esta acción eliminará su perfil permanentemente.')) {
+                    const submitBtn = document.getElementById('nu-submit');
+                    if (submitBtn) submitBtn.disabled = true;
+                    btnDeleteUser.disabled = true;
+                    btnDeleteUser.style.opacity = '0.5';
+                    
+                    const res = await Store.adminDeleteUser(id);
+                    if (res.success) {
+                        Store.showToast('Empleado dado de baja con éxito', 'success');
+                        formContainer.style.display = 'none';
+                        toggleBtn.style.display = 'block';
+                        await this.updateSummaryStats();
+                        await this.renderUsers(targetMonth);
+                    } else {
+                        Store.showToast(res.error, 'error');
+                        if (submitBtn) submitBtn.disabled = false;
+                        btnDeleteUser.disabled = false;
+                        btnDeleteUser.style.opacity = '1';
+                    }
+                }
+            });
+        }
+
         // Initialize Global Records
         const globalMonthFilter = document.getElementById('employer-global-month-filter');
         let globalTargetMonth = availableMonths[0]; 
@@ -311,6 +345,10 @@ export const EmployerDashboard = {
                 document.getElementById('record-form-title').textContent = 'Añadir Registro Manual';
                 recordFormContainer.style.display = 'block';
                 btnAddRecord.style.display = 'none';
+                document.getElementById('btn-delete-record').style.display = 'none';
+                
+                const submitBtn = recordForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
                 
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -325,14 +363,51 @@ export const EmployerDashboard = {
             });
         }
 
+        const btnDeleteRecord = document.getElementById('btn-delete-record');
+        if (btnDeleteRecord) {
+            btnDeleteRecord.addEventListener('click', async () => {
+                const id = document.getElementById('rf-id').value;
+                if (!id) return;
+                
+                if (confirm('¿Estás seguro de que deseas eliminar este registro por completo? Esta acción no se puede deshacer.')) {
+                    const submitBtn = recordForm.querySelector('button[type="submit"]');
+                    submitBtn.disabled = true;
+                    btnDeleteRecord.disabled = true;
+                    
+                    const success = await Store.adminDeleteRecord(id);
+                    if (success) {
+                        Store.showToast('Registro eliminado', 'success');
+                        recordFormContainer.style.display = 'none';
+                        btnAddRecord.style.display = 'block';
+                        await this.updateSummaryStats();
+                        await this.renderGlobalRecords(globalTargetMonth);
+                        await this.renderUsers(targetMonth);
+                    } else {
+                        Store.showToast("Error al intentar borrar. Revisa la consola.", "error");
+                    }
+                    
+                    submitBtn.disabled = false;
+                    btnDeleteRecord.disabled = false;
+                }
+            });
+        }
+
         if (recordForm) {
             recordForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+
                 const id = document.getElementById('rf-id').value;
                 const userId = document.getElementById('rf-user-id').value;
                 const opt = rfUserSelect.options[rfUserSelect.selectedIndex];
                 const userName = opt.getAttribute('data-name');
-                const timestamp = document.getElementById('rf-timestamp').value;
+                const timestampInput = document.getElementById('rf-timestamp').value;
+                const [datePart, timePart] = timestampInput.split('T');
+                const [year, month, day] = datePart.split('-');
+                const [hours, minutes] = timePart.split(':');
+                const localDate = new Date(year, month - 1, day, hours, minutes);
+                const timestamp = localDate.toISOString();
                 const type = document.getElementById('rf-type').value;
                 const notes = document.getElementById('rf-notes').value;
 
@@ -351,6 +426,7 @@ export const EmployerDashboard = {
                     await this.renderGlobalRecords(globalTargetMonth);
                     await this.renderUsers(targetMonth); 
                 }
+                submitBtn.disabled = false;
             });
         }
 
@@ -397,14 +473,19 @@ export const EmployerDashboard = {
                 <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
                 <td style="font-size: 0.85rem; color: var(--text-secondary); max-width: 150px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${r.notes || ''}">${r.notes ? r.notes : '<span style="opacity:0.3">-</span>'}</td>
                 <td style="text-align: right;">
-                    <button class="btn-edit-record" 
-                            data-id="${r.id}" 
-                            data-user-id="${r.user_id}" 
-                            data-user-name="${r.user_name}"
-                            data-timestamp="${r.timestamp}" 
-                            data-type="${r.type}" 
-                            data-notes="${r.notes || ''}"
-                            style="background: none; border: none; cursor: pointer; color: var(--primary); padding: 0.25rem;">✏️</button>
+                    <div style="display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
+                        <button class="btn-edit-record" 
+                                data-id="${r.id}" 
+                                data-user-id="${r.user_id}" 
+                                data-user-name="${r.user_name}"
+                                data-timestamp="${r.timestamp}" 
+                                data-type="${r.type}" 
+                                data-notes="${r.notes || ''}"
+                                style="background: none; border: none; cursor: pointer; color: var(--primary); padding: 0.25rem;" title="Corregir registro">✏️</button>
+                        <button class="btn-delete-record-direct" 
+                                data-id="${r.id}"
+                                style="background: none; border: none; cursor: pointer; color: var(--danger); padding: 0.25rem;" title="Eliminar registro">🗑️</button>
+                    </div>
                 </td>
             </tr>
             `;
@@ -433,7 +514,39 @@ export const EmployerDashboard = {
                 document.getElementById('record-form-title').textContent = 'Corregir Registro';
                 document.getElementById('record-form-container').style.display = 'block';
                 document.getElementById('btn-add-manual-record').style.display = 'none';
+                document.getElementById('btn-delete-record').style.display = 'block';
+                
+                const submitBtn = document.getElementById('record-form').querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+
                 window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            };
+        });
+
+        document.querySelectorAll('.btn-delete-record-direct').forEach(btn => {
+            btn.onclick = async (e) => {
+                const id = btn.getAttribute('data-id');
+                if (confirm('¿Estás seguro de que deseas eliminar este registro por completo? Esta acción no se puede deshacer.')) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                    const success = await Store.adminDeleteRecord(id);
+                    if (success) {
+                        Store.showToast('Registro eliminado', 'success');
+                        await this.updateSummaryStats();
+                        const globalMonthFilter = document.getElementById('employer-global-month-filter');
+                        const globalTargetMonth = globalMonthFilter ? globalMonthFilter.value : null;
+                        
+                        const targetMonthFilter = document.getElementById('employer-month-filter');
+                        const targetMonth = targetMonthFilter ? targetMonthFilter.value : null;
+                        
+                        await this.renderGlobalRecords(globalTargetMonth);
+                        await this.renderUsers(targetMonth);
+                    } else {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        Store.showToast('Error al eliminar registro', 'error');
+                    }
+                }
             };
         });
     },
@@ -520,6 +633,10 @@ export const EmployerDashboard = {
                 document.getElementById('new-user-title').textContent = 'Editar Usuario';
                 document.getElementById('new-user-form-container').style.display = 'block';
                 document.getElementById('btn-toggle-new-user').style.display = 'none';
+                
+                const btnDeleteUser = document.getElementById('btn-delete-user');
+                if (btnDeleteUser) btnDeleteUser.style.display = 'block';
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             };
         });
