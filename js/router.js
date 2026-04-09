@@ -8,13 +8,15 @@ import { AuditorDashboard } from './views/dashboard-auditor.js?v=999';
 import { ManualView } from './views/manual-view.js?v=999';
 
 export const Router = {
-    routes: {
-        '/': LoginView,
-        '/login': LoginView,
-        '/employee': EmployeeDashboard,
-        '/employer': EmployerDashboard,
-        '/auditor': AuditorDashboard,
-        '/manual': ManualView
+    get routes() {
+        return {
+            '/': LoginView,
+            '/login': LoginView,
+            '/employee': EmployeeDashboard,
+            '/employer': EmployerDashboard,
+            '/auditor': AuditorDashboard,
+            '/manual': ManualView
+        };
     },
 
     navigate(path) {

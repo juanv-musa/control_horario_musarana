@@ -23,23 +23,6 @@
     </script>
 </head>
 <body>
-    <!-- TEMPORARY ONSCREEN ERROR LOGGER -->
-    <div id="debug-error-log" style="position: fixed; top: 0; left: 0; z-index: 999999; background: rgba(255,0,0,0.9); color: white; width: 100%; padding: 10px; font-family: monospace; display: none;"></div>
-    <script>
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            const logPanel = document.getElementById('debug-error-log');
-            logPanel.style.display = 'block';
-            logPanel.innerHTML += '<p><strong>Error:</strong> ' + msg + ' <br><strong>Archivo:</strong> ' + url + ' (Línea ' + lineNo + ')</p>';
-            return false;
-        };
-        // Also capture unhandled promise rejections
-        window.addEventListener('unhandledrejection', function(event) {
-            const logPanel = document.getElementById('debug-error-log');
-            logPanel.style.display = 'block';
-            logPanel.innerHTML += '<p><strong>Promesa Rechazada:</strong> ' + (event.reason ? event.reason.message || event.reason : 'Desconocido') + '</p>';
-        });
-    </script>
-    
     <div id="background-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
