@@ -51,3 +51,14 @@ Basado en el **Art. 34.9 del Estatuto de los Trabajadores** para garantizar la t
 
 ---
 *Musaraña - 2026*
+
+## 🛠️ Mantenimiento (Keep-Alive)
+Supabase pausa los proyectos gratuitos tras 7 días de inactividad. Para evitar depender de servicios externos como `cron-job.org`, se han integrado soluciones automáticas directamente en el código:
+
+- **Si alojas en Vercel:** Se ha añadido un archivo `vercel.json` y una ruta en `api/keep-alive.js` que se ejecutará automáticamente todos los días a las 12:00.
+- **Si alojas en GitHub Pages:** Se ha añadido una **GitHub Action** en la ruta `.github/workflows/keep-alive.yml` que hace "ping" a la base de datos de manera automática a diario.
+
+Ya no es necesario configurar mantenimientos manuales; simplemente haz un commit y súbelo a tu repositorio.
+
+---
+*Musaraña - 2026*
