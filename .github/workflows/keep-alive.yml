@@ -1,0 +1,17 @@
+name: Supabase Keep Alive
+
+on:
+  schedule:
+    # Ejecuta a las 12:00 UTC todos los días
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping-supabase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase API
+        run: |
+          curl -s -i "https://jronohxljvanawpyuctb.supabase.co/rest/v1/profiles?select=id&limit=1" \
+          -H "apikey: sb_publishable_AJOyDQKymOUlvlGxfOmNkQ_fi8g3jGY" \
+          -H "Authorization: Bearer sb_publishable_AJOyDQKymOUlvlGxfOmNkQ_fi8g3jGY"
