@@ -4,7 +4,7 @@ on:
   schedule:
     # Ejecuta a las 12:00 UTC todos los días
     - cron: '0 12 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Permite ejecución manual desde GitHub
 
 jobs:
   ping-supabase:
