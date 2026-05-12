@@ -137,7 +137,6 @@ export const EmployeeDashboard = {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <!-- Profile Section -->
                     <div style="margin-top: 1rem; width: 100%;">

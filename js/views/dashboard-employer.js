@@ -33,7 +33,7 @@ export const EmployerDashboard = {
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                             <h2 style="margin: 0; font-size: 1.4rem;">👥 Gestión de Personal</h2>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                                <select id="employer-month-filter" class="form-control" style="width: auto; background: white; height: 38px;">
+                                <select id="employer-month-filter" class="form-control" style="width: auto; background: white; font-size: 0.9rem; padding: 0.5rem 2rem 0.5rem 0.75rem;">
                                     <!-- Filled dynamically -->
                                 </select>
                                 <button class="btn" id="btn-toggle-new-user" style="background: var(--primary); color: white; padding: 0.5rem 1rem; height: 38px; border: none; border-radius: var(--radius-sm); font-weight: 600;">+ Añadir Empleado</button>
@@ -94,7 +94,7 @@ export const EmployerDashboard = {
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                             <h2 style="margin: 0; font-size: 1.4rem;">📅 Registro Global</h2>
                             <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-                                <select id="employer-global-month-filter" class="form-control" style="width: auto; background: white; height: 38px;">
+                                <select id="employer-global-month-filter" class="form-control" style="width: auto; background: white; font-size: 0.9rem; padding: 0.5rem 2rem 0.5rem 0.75rem;">
                                     <!-- Filled dynamically -->
                                 </select>
                                 <button class="btn" id="btn-add-manual-record" style="background: var(--text-primary); color: white; padding: 0.5rem 1rem; height: 38px; border: none; border-radius: var(--radius-sm); font-weight: 600;">+ Añadir Olvido</button>
