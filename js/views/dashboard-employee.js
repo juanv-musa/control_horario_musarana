@@ -59,6 +59,11 @@ export const EmployeeDashboard = {
                                         <strong id="history-total-hours" style="font-size: 1.1rem; color: var(--primary);">00:00</strong>
                                     </div>
 
+                                    <div id="employee-export-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+                                        <button class="btn" id="btn-employee-csv" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; background: white; border: 1px solid var(--border); color: var(--text-secondary);">📄 Descargar CSV</button>
+                                        <button class="btn" id="btn-employee-pdf" style="flex: 1; padding: 0.5rem; font-size: 0.8rem; background: #6366F1; color: white; border: none;">📋 Ver Reporte PDF</button>
+                                    </div>
+
                                     <div id="signature-container">
                                         <!-- Filled by updatePeriod -->
                                     </div>
@@ -159,8 +164,10 @@ export const EmployeeDashboard = {
                     </div>
                 </div>
                 
-                <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; background: white;">
-                    <p>Musaraña &copy; 2026</p>
+                <footer>
+                    <img src="assets/logo.png" alt="MUSARAÑA">
+                    <div class="footer-tag">Sistema de Registro Horario Certificado</div>
+                    <div class="copyright">Musaraña &copy; 2026 &bull; Gestión Integral de Museos</div>
                 </footer>
             </div>
         `;
@@ -338,6 +345,14 @@ export const EmployeeDashboard = {
                         }
                     };
                 }
+
+                // Attach export listeners
+                document.getElementById('btn-employee-csv').onclick = () => {
+                    Store.exportEmployeeCSV(user.id, selectedMonth);
+                };
+                document.getElementById('btn-employee-pdf').onclick = () => {
+                    Store.exportEmployeePDF(user.id, selectedMonth);
+                };
             };
 
             monthFilter.onchange = updatePeriod;

@@ -178,12 +178,42 @@ body {
 
 footer {
     text-align: center;
-    padding: 2.5rem;
+    padding: 3rem 2rem;
     color: var(--text-secondary);
     font-size: 0.85rem;
     border-top: 1px solid var(--border);
-    margin-top: 3rem;
+    margin-top: 4rem;
     background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+footer img {
+    height: 32px;
+    opacity: 0.6;
+    filter: grayscale(1);
+    transition: all 0.3s ease;
+}
+
+footer img:hover {
+    opacity: 1;
+    filter: grayscale(0);
+}
+
+footer .footer-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    color: var(--primary);
+    opacity: 0.8;
+}
+
+footer .copyright {
+    opacity: 0.6;
+    font-size: 0.8rem;
 }
 
 /* Utilities */
