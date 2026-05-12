@@ -566,11 +566,11 @@ export const EmployerDashboard = {
             const rDate = new Date(r.timestamp);
             return `
             <tr>
-                <td style="font-weight: 500; color: var(--primary);">${r.user_name}</td>
-                <td style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
-                <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
-                <td style="font-size: 0.85rem; color: var(--text-secondary); max-width: 150px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${r.notes || ''}">${r.notes ? r.notes : '<span style="opacity:0.3">-</span>'}</td>
-                <td style="text-align: right;">
+                <td data-label="Empleado" style="font-weight: 500; color: var(--primary);">${r.user_name}</td>
+                <td data-label="Fecha/Hora" style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
+                <td data-label="Acción"><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
+                <td data-label="Notas" style="font-size: 0.85rem; color: var(--text-secondary); max-width: 150px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${r.notes || ''}">${r.notes ? r.notes : '<span style="opacity:0.3">-</span>'}</td>
+                <td data-label="Acciones" style="text-align: right;">
                     <div style="display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
                         <button class="btn-edit-record" 
                                 data-id="${r.id}" 
@@ -658,10 +658,12 @@ export const EmployerDashboard = {
         }
 
         const users = await Store.adminGetAllUsers();
+        // FILTRO: Solo empleados
+        const employees = users.filter(u => u.role === 'employee');
         const tbody = document.querySelector('#users-table tbody');
         if (!tbody) return;
         
-        const userRows = await Promise.all(users.map(async u => {
+        const userRows = await Promise.all(employees.map(async u => {
             const hours = await Store.calculateMonthlyHours(u.id, monthStr);
             const periodRecords = await Store.getRecords({ userId: u.id, month: monthStr });
             
@@ -670,31 +672,33 @@ export const EmployerDashboard = {
 
             return `
                 <tr>
-                    <td style="font-weight: 500;">${u.full_name}</td>
-                    <td style="font-family: monospace; font-weight: 700; color: var(--text-primary);">${Store.formatTime(hours)}</td>
-                    <td>
+                    <td data-label="Nombre Completo" style="font-weight: 500;">${u.full_name}</td>
+                    <td data-label="Horas" style="font-family: monospace; font-weight: 700; color: var(--text-primary);">${Store.formatTime(hours)}</td>
+                    <td data-label="Firma Emp.">
                         <span class="badge ${isEmployeeSigned ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.75rem;">
                             ${isEmployeeSigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente' : 'SIN DATOS')}
                         </span>
                     </td>
-                    <td>
+                    <td data-label="Firma Cía.">
                         <span class="badge ${isCompanySigned ? 'badge-info' : 'badge-inactive'}" style="font-size: 0.75rem;">
                             ${isCompanySigned ? 'Validado' : (periodRecords.length > 0 ? 'Pendiente' : 'SIN DATOS')}
                         </span>
                     </td>
-                    <td style="text-align: right; display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
-                        <button class="btn-edit-user" 
-                                data-id="${u.id}" 
-                                data-name="${u.full_name}" 
-                                data-role="${u.role}" 
-                                style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.25rem;" 
-                                title="Editar datos">✏️</button>
-                        
-                        ${isEmployeeSigned && !isCompanySigned ? 
-                            `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white;">✍️ Firma Empresa</button>` : ''
-                        }
-                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="CSV de este mes">📄 CSV</button>
-                        <button class="btn btn-export-pdf" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: #6366F1; color: white; border: none;" title="PDF de este mes">📋 PDF</button>
+                    <td data-label="Acciones" style="text-align: right;">
+                        <div class="btn-group-responsive" style="display: flex; justify-content: flex-end; gap: 0.5rem; align-items: center;">
+                            <button class="btn-edit-user" 
+                                    data-id="${u.id}" 
+                                    data-name="${u.full_name}" 
+                                    data-role="${u.role}" 
+                                    style="background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.25rem;" 
+                                    title="Editar datos">✏️</button>
+                            
+                            ${isEmployeeSigned && !isCompanySigned ? 
+                                `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white; border-radius: 6px; border:none;">✍️ Firma Empresa</button>` : ''
+                            }
+                            <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 6px;" title="CSV de este mes">📄 CSV</button>
+                            <button class="btn btn-export-pdf" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: #6366F1; color: white; border: none; border-radius: 6px;" title="PDF de este mes">📋 PDF</button>
+                        </div>
                     </td>
                 </tr>
             `;
@@ -866,16 +870,16 @@ export const EmployerDashboard = {
             const sc = statusConfig[a.status] || statusConfig.pending;
             const badge = `<span style="background:${sc.bg};color:${sc.color};padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">${sc.label}</span>`;
             return `<tr>
-                <td style="font-weight:500;">${empName}</td>
-                <td>${typeLabels[a.type] || a.type}</td>
-                <td style="font-family:monospace;">${a.start_date}</td>
-                <td style="font-family:monospace;">${a.end_date}</td>
-                <td><strong>${a.working_days || 0}</strong> días</td>
-                <td>${badge}</td>
-                <td style="text-align:right;">
-                    <div style="display:flex;justify-content:flex-end;gap:0.4rem;flex-wrap:wrap;">
-                        ${a.status !== 'approved' ? `<button class="btn-ab-approve" data-id="${a.id}" style="background:#D1FAE5;color:#065F46;border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">✅ Aprobar</button>` : ''}
-                        ${a.status !== 'denied' ? `<button class="btn-ab-deny" data-id="${a.id}" style="background:#FEE2E2;color:#991B1B;border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">❌ Denegar</button>` : ''}
+                <td data-label="Empleado" style="font-weight:500;">${empName}</td>
+                <td data-label="Tipo">${typeLabels[a.type] || a.type}</td>
+                <td data-label="Inicio" style="font-family:monospace;">${a.start_date}</td>
+                <td data-label="Fin" style="font-family:monospace;">${a.end_date}</td>
+                <td data-label="Días"><strong>${a.working_days || 0}</strong> días</td>
+                <td data-label="Estado">${badge}</td>
+                <td data-label="Acciones" style="text-align:right;">
+                    <div class="btn-group-responsive" style="justify-content:flex-end;">
+                        ${a.status !== 'approved' ? `<button class="btn-ab-approve" data-id="${a.id}" style="background:#D1FAE5;color:#065F46;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">Aprobar</button>` : ''}
+                        ${a.status !== 'denied' ? `<button class="btn-ab-deny" data-id="${a.id}" style="background:#FEE2E2;color:#991B1B;border:none;padding:4px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">Denegar</button>` : ''}
                         <button class="btn-ab-edit" data-id="${a.id}" data-user="${a.user_id}" data-type="${a.type}" data-start="${a.start_date}" data-end="${a.end_date}" data-status="${a.status}" data-notes="${a.notes || ''}" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:3px;">✏️</button>
                     </div>
                 </td>
@@ -926,16 +930,16 @@ export const EmployerDashboard = {
             const pct = Math.min(100, Math.round((used / total) * 100));
             const barColor = pct >= 90 ? '#EF4444' : pct >= 70 ? '#F59E0B' : '#10B981';
             return `<tr>
-                <td style="font-weight:500;">${u.full_name}</td>
-                <td style="text-align:center;">
+                <td data-label="Empleado" style="font-weight:500;">${u.full_name}</td>
+                <td data-label="Total Asignado" style="text-align:center;">
                     <div style="display:flex;align-items:center;gap:0.5rem;justify-content:center;">
                         <strong>${total}</strong>
                         <button class="btn-edit-allowance" data-id="${u.id}" data-current="${total}" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:2px;">✏️</button>
                     </div>
                 </td>
-                <td style="text-align:center;"><strong style="color:#EF4444;">${used}</strong></td>
-                <td style="text-align:center;"><strong style="color:#10B981;">${avail}</strong></td>
-                <td>
+                <td data-label="Días Usados" style="text-align:center;"><strong style="color:#EF4444;">${used}</strong></td>
+                <td data-label="Disponibles" style="text-align:center;"><strong style="color:#10B981;">${avail}</strong></td>
+                <td data-label="Progreso">
                     <div style="background:#e5e7eb;border-radius:999px;height:10px;overflow:hidden;">
                         <div style="background:${barColor};height:100%;width:${pct}%;border-radius:999px;transition:width 0.5s ease;"></div>
                     </div>

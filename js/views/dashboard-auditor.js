@@ -6,41 +6,40 @@ export const AuditorDashboard = {
         if (!user) return '';
 
         return `
-            <div style="width: 100%;">
-                <nav class="navbar" style="background: rgba(239, 68, 68, 0.05);">
-                    <div class="nav-brand">
+            <div style="width: 100%; min-height: 100vh; background: var(--bg-page);">
+                <nav class="navbar" style="background: rgba(239, 68, 68, 0.05); border-bottom: 2px solid var(--danger);">
+                    <div class="nav-brand" style="flex-wrap: wrap; gap: 0.5rem;">
                         <img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"> 
-                        <span style="font-size: 0.9rem; margin-left: 1rem; color: var(--danger); font-weight: 700; border-left: 2px solid var(--danger); padding-left: 1rem;">ACCESO AUDITORÍA</span>
+                        <span style="font-size: 0.8rem; color: var(--danger); font-weight: 800; border-left: 2px solid var(--danger); padding-left: 0.75rem; text-transform: uppercase;">Acceso Inspección</span>
                     </div>
                     <div class="user-info">
-                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #FEF2F2; color: #DC2626; border: none; font-size: 0.85rem;">📖 Manual</a>
-                        <span class="user-role" style="background: #FEE2E2; color: #991B1B;">Auditoría</span>
-                        <span style="font-weight: 500;">${user.full_name}</span>
+                        <a href="#/manual" class="btn btn-secondary" style="background: #FEF2F2; color: #DC2626; border: none; font-size: 0.85rem; padding: 0.5rem 1rem;">📖 Manual</a>
+                        <span class="user-role" style="background: #FEE2E2; color: #991B1B;">Auditor</span>
+                        <span style="font-weight: 600;">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
                     </div>
                 </nav>
-                <div class="container mt-6">
-                    <div class="glass-panel" style="padding: 2.5rem;">
-                        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
-                            <h2 style="margin-bottom: 0.5rem;">Auditoría de Cumplimiento Laboral</h2>
-                            <p class="text-secondary" style="margin-top: 0;">Portal de acceso para la auditoría de trabajo. Registros conforme al Art. 34.9 ET.</p>
+                <div class="container py-4">
+                    <div class="glass-panel" style="padding: 1.25rem;">
+                        <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;">
+                            <h2 style="margin: 0; font-size: 1.3rem;">📋 Auditoría Laboral</h2>
+                            <p class="text-secondary" style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">Registros oficiales conforme al Art. 34.9 ET.</p>
                         </div>
                         
-                        <div class="dashboard-grid" style="align-items: end; margin-bottom: 2.5rem; background: #f8fafc; padding: 1.5rem; border-radius: var(--radius-md);">
+                        <div class="dashboard-grid" style="margin-bottom: 1.5rem; background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Filtrar Empleado</label>
-                                <select id="export-filter-employee" class="form-control" style="background: white;">
-                                    <option value="ALL">Todos los Empleados registrados</option>
+                                <label class="form-label" style="font-size: 0.8rem;">Filtrar Empleado</label>
+                                <select id="export-filter-employee" class="form-control" style="background: white; font-size: 0.9rem;">
+                                    <option value="ALL">Todos los Empleados</option>
                                 </select>
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">Periodo Mensual</label>
-                                <select id="export-filter-month" class="form-control" style="background: white;">
-                                    <option value="ALL">Todo el historial (Advertencia: Lento)</option>
-                                    <!-- Filled dynamically -->
+                                <label class="form-label" style="font-size: 0.8rem;">Periodo Mensual</label>
+                                <select id="export-filter-month" class="form-control" style="background: white; font-size: 0.9rem;">
+                                    <option value="ALL">Historial completo</option>
                                 </select>
                             </div>
-                            <button class="btn btn-primary" id="btn-export" style="height: 42px; width: 100%;">Generar Reporte Firma</button>
+                            <button class="btn btn-primary" id="btn-export" style="height: 42px; width: 100%; background: var(--danger); border: none;">Generar Reporte CSV</button>
                         </div>
                         
                         <div id="audit-summary-container" style="display: none; background: #DBEAFE; color: #1E40AF; padding: 1.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; border: 1px solid #BFDBFE;">
@@ -125,16 +124,16 @@ export const AuditorDashboard = {
                     const rDate = new Date(r.timestamp);
                     return `
                     <tr>
-                        <td style="font-size: 0.7rem; font-family: monospace; color: var(--text-secondary);">${r.id.split('-')[0]}...</td>
-                        <td style="font-weight: 500;">${r.user_name}</td>
-                        <td style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
-                        <td><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
-                        <td>
+                        <td data-label="ID" style="font-size: 0.7rem; font-family: monospace; color: var(--text-secondary);">${r.id.split('-')[0]}...</td>
+                        <td data-label="Empleado" style="font-weight: 600;">${r.user_name}</td>
+                        <td data-label="Fecha/Hora" style="font-family: monospace;">${rDate.toLocaleString('es-ES')}</td>
+                        <td data-label="Acción"><span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span></td>
+                        <td data-label="Firma Emp.">
                             ${r.is_validated 
                                 ? `<span style="color: #10B981; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
                                 : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}
                         </td>
-                        <td>
+                        <td data-label="Firma Cía.">
                             ${r.is_company_validated 
                                 ? `<span style="color: #6366F1; font-weight: 600; font-size: 0.75rem;">✔ Validado</span>` 
                                 : '<span style="color: #EF4444; font-weight: 600; font-size: 0.75rem;">⌛ Pendiente</span>'}

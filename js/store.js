@@ -533,67 +533,69 @@ export const Store = {
 <meta charset="UTF-8">
 <title>Registro Jornada — ${empName} — ${monthLabel}</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; color:#111827; background:#fff; padding:32px; font-size:13px; }
-  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; border-bottom:3px solid #8CC63F; padding-bottom:16px; }
-  .logo-area h1 { font-size:22px; font-weight:800; color:#8CC63F; }
-  .logo-area p { font-size:12px; color:#6b7280; margin-top:4px; }
+  body { font-family: 'Inter', sans-serif; color:#111827; background:#fff; padding:40px; font-size:12px; line-height:1.5; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:30px; border-bottom:2px solid #8CC63F; padding-bottom:20px; }
+  .logo-area h1 { font-size:24px; font-weight:800; color:#8CC63F; letter-spacing:-0.02em; }
+  .logo-area p { font-size:11px; color:#6b7280; font-weight:600; text-transform:uppercase; margin-top:4px; }
   .meta { text-align:right; }
-  .meta .emp-name { font-size:17px; font-weight:700; color:#111827; }
-  .meta .period { font-size:13px; color:#6b7280; margin-top:2px; }
-  .meta .generated { font-size:11px; color:#9ca3af; margin-top:4px; }
-  .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
-  .summary-box { background:#f3f4f6; border-radius:8px; padding:14px; text-align:center; }
-  .summary-box .label { font-size:11px; text-transform:uppercase; color:#6b7280; font-weight:600; letter-spacing:.05em; }
-  .summary-box .value { font-size:20px; font-weight:800; color:#111827; margin-top:4px; }
-  table { width:100%; border-collapse:collapse; margin-top:16px; }
-  thead th { background:#f9fafb; padding:10px; font-size:11px; text-transform:uppercase; color:#6b7280; font-weight:700; text-align:left; border-bottom:2px solid #e5e7eb; }
-  .cert-section { margin-top:28px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .cert-box { border:1px solid #e5e7eb; border-radius:8px; padding:14px; }
-  .cert-box .cert-title { font-size:11px; text-transform:uppercase; font-weight:700; color:#6b7280; margin-bottom:6px; }
-  .cert-box .cert-value { font-size:13px; color:#111827; }
-  .legal-note { margin-top:20px; font-size:10px; color:#9ca3af; border-top:1px solid #e5e7eb; padding-top:12px; }
-  @media print { body { padding:16px; } }
+  .meta .emp-name { font-size:18px; font-weight:800; color:#111827; }
+  .meta .period { font-size:13px; color:#4b5563; margin-top:4px; font-weight:600; }
+  .meta .generated { font-size:10px; color:#9ca3af; margin-top:6px; }
+  .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; margin:25px 0; }
+  .summary-box { border:1px solid #e5e7eb; border-radius:10px; padding:15px; text-align:center; background:#f9fafb; }
+  .summary-box .label { font-size:10px; text-transform:uppercase; color:#6b7280; font-weight:700; letter-spacing:.05em; margin-bottom:5px; }
+  .summary-box .value { font-size:18px; font-weight:800; color:#111827; }
+  table { width:100%; border-collapse:collapse; margin-top:20px; }
+  thead th { background:#f3f4f6; padding:12px 10px; font-size:10px; text-transform:uppercase; color:#374151; font-weight:800; text-align:left; border-bottom:2px solid #d1d5db; }
+  tbody td { padding:10px; border-bottom:1px solid #f3f4f6; vertical-align:middle; }
+  .cert-section { margin-top:40px; display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .cert-box { border:1px solid #e5e7eb; border-radius:10px; padding:18px; min-height:100px; background:#fff; }
+  .cert-box .cert-title { font-size:10px; text-transform:uppercase; font-weight:800; color:#6b7280; margin-bottom:10px; border-bottom:1px solid #f3f4f6; padding-bottom:5px; }
+  .cert-box .cert-value { font-size:12px; color:#111827; font-weight:500; }
+  .legal-note { margin-top:40px; font-size:9.5px; color:#9ca3af; line-height:1.6; text-align:justify; border-top:1px solid #f3f4f6; padding-top:15px; }
+  @media print { body { padding:20px; } .summary-box { background:#f9fafb !important; -webkit-print-color-adjust: exact; } }
 </style>
 </head>
 <body>
   <div class="header">
     <div class="logo-area">
       <h1>MUSARAÑA</h1>
-      <p>Registro de Control Horario</p>
-      <p style="margin-top:2px;color:#8CC63F;font-size:11px;">Art. 34.9 Estatuto de los Trabajadores</p>
+      <p>Control de Jornada Laboral</p>
+      <div style="margin-top:8px; display:inline-block; background:#ECFDF5; color:#065F46; padding:4px 8px; border-radius:4px; font-size:9px; font-weight:800;">CONFORME ART. 34.9 ET</div>
     </div>
     <div class="meta">
       <div class="emp-name">${empName}</div>
-      <div class="period">📅 ${monthLabel}</div>
-      <div class="generated">Generado: ${new Date().toLocaleString('es-ES')}</div>
-      <div class="generated">Por: ${this.getUser()?.full_name || 'Sistema'}</div>
+      <div class="period">Periodo: ${monthLabel}</div>
+      <div class="generated">Generado el ${new Date().toLocaleString('es-ES')}</div>
+      <div class="generated">Responsable: ${this.getUser()?.full_name || 'Sistema'}</div>
     </div>
   </div>
 
   <div class="summary-grid">
     <div class="summary-box">
-      <div class="label">Total registros</div>
+      <div class="label">Total Fichajes</div>
       <div class="value">${records.length}</div>
     </div>
     <div class="summary-box">
-      <div class="label">Horas trabajadas</div>
-      <div class="value">${this.formatTime(hours)}</div>
+      <div class="label">Horas Totales</div>
+      <div class="value" style="color:#8CC63F;">${this.formatTime(hours)}</div>
     </div>
     <div class="summary-box">
-      <div class="label">Estado firma</div>
-      <div class="value" style="font-size:14px;">${firstRec.is_validated ? '✅ Firmado' : '⏳ Pendiente'}</div>
+      <div class="label">Estado de Firma</div>
+      <div class="value" style="font-size:13px;">${firstRec.is_validated && firstRec.is_company_validated ? '✅ VALIDADO' : '⏳ EN PROCESO'}</div>
     </div>
   </div>
 
   <table>
     <thead>
       <tr>
-        <th>Fecha y Hora</th>
-        <th>Tipo</th>
-        <th>Observaciones</th>
-        <th>Firma Emp.</th>
-        <th>Firma Emp.</th>
+        <th style="width:30%;">Fecha y Hora</th>
+        <th style="width:15%;">Evento</th>
+        <th style="width:35%;">Observaciones</th>
+        <th style="width:10%; text-align:center;">Emp.</th>
+        <th style="width:10%; text-align:center;">Cía.</th>
       </tr>
     </thead>
     <tbody>
@@ -603,19 +605,23 @@ export const Store = {
 
   <div class="cert-section">
     <div class="cert-box">
-      <div class="cert-title">✍️ Certificación Empleado</div>
+      <div class="cert-title">Firma del Trabajador</div>
       <div class="cert-value">${empCert}</div>
+      <div style="margin-top:20px; border-bottom:1px solid #e5e7eb; width:150px; height:40px;"></div>
     </div>
     <div class="cert-box">
-      <div class="cert-title">🏢 Certificación Empresa</div>
+      <div class="cert-title">Sello y Firma de la Empresa</div>
       <div class="cert-value">${compCert}</div>
+      <div style="margin-top:20px; border-bottom:1px solid #e5e7eb; width:150px; height:40px;"></div>
     </div>
   </div>
 
   <div class="legal-note">
-    Documento generado automáticamente por el sistema de control horario MUSARAÑA conforme al Real Decreto-ley 8/2019 
-    y el Art. 34.9 del Estatuto de los Trabajadores (ET). La empresa está obligada a conservar estos registros durante 
-    4 años. Este documento tiene validez legal como registro de jornada laboral.
+    Este documento constituye el registro diario de jornada previsto en el artículo 34.9 del Estatuto de los Trabajadores. 
+    La empresa garantiza la veracidad de los datos aquí reflejados. El trabajador, mediante su validación digital o firma, 
+    ratifica la exactitud de los periodos de trabajo informados. La empresa debe conservar estos registros durante cuatro 
+    años, permaneciendo a disposición de las personas trabajadoras, de sus representantes legales y de la Inspección de 
+    Trabajo y Seguridad Social.
   </div>
 </body>
 </html>`;
