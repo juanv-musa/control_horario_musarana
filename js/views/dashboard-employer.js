@@ -7,17 +7,17 @@ export const EmployerDashboard = {
         if (!user) return '';
 
         return `
-            <div style="width: 100%;">
+            <div style="width: 100%; min-height: 100vh; background: var(--bg-page);">
                 <nav class="navbar">
                     <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
                     <div class="user-info">
-                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem;">📖 Manual</a>
+                        <a href="#/manual" class="btn btn-secondary" style="background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem; padding: 0.5rem 1rem;">📖 Manual</a>
                         <span class="user-role">Musaraña</span>
-                        <span style="font-weight: 500;">${user.full_name}</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
                     </div>
                 </nav>
-                <div class="container mt-6">
+                <div class="container mt-4">
                     <div class="dashboard-grid">
                         <div class="glass-panel stat-card">
                             <span class="stat-title">Registros de Hoy</span>
@@ -73,13 +73,13 @@ export const EmployerDashboard = {
                         </div>
 
                         <div class="table-container">
-                            <table class="table" id="users-table">
+                            <table class="table" id="users-table" style="font-size: 0.9rem;">
                                 <thead>
                                     <tr>
                                         <th>Nombre Completo</th>
-                                        <th>Horas (Periodo)</th>
-                                        <th>Firma Empleado</th>
-                                        <th>Firma Empresa</th>
+                                        <th>Horas</th>
+                                        <th>Firma Emp.</th>
+                                        <th>Firma Cía.</th>
                                         <th style="text-align: right;">Acciones</th>
                                     </tr>
                                 </thead>
@@ -136,13 +136,13 @@ export const EmployerDashboard = {
                         </div>
 
                         <div class="table-container">
-                            <table class="table" id="global-records">
+                            <table class="table" id="global-records" style="font-size: 0.85rem;">
                                 <thead>
                                     <tr>
                                         <th>Empleado</th>
                                         <th>Fecha/Hora</th>
                                         <th>Acción</th>
-                                        <th>Observaciones</th>
+                                        <th>Notas</th>
                                         <th style="text-align: right;">Acciones</th>
                                     </tr>
                                 </thead>

@@ -4,57 +4,59 @@ export const EmployeeDashboard = {
     render() {
         const user = Store.getUser();
         return `
-            <div style="width: 100%; min-height: 100vh; background: #f9fafb;">
+            <div style="width: 100%; min-height: 100vh; background: var(--bg-page);">
                 <nav class="navbar">
-                    <div class="nav-brand"><img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;"></div>
+                    <div class="nav-brand">
+                        <img src="assets/logo.png" alt="MUSARAÑA" style="height: 48px;">
+                    </div>
                     <div class="user-info">
-                        <a href="#/manual" class="btn btn-secondary" style="margin-right: 1rem; background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem;">📖 Manual</a>
+                        <a href="#/manual" class="btn btn-secondary" style="background: #EEF2FF; color: #6366F1; border: none; font-size: 0.85rem; padding: 0.5rem 1rem;">📖 Manual</a>
                         <span class="user-role">Empleado</span>
-                        <span style="font-weight: 500;">${user.full_name}</span>
+                        <span style="font-weight: 600; color: var(--text-primary);">${user.full_name}</span>
                         <button class="logout-btn" onclick="window.logout()">Salir</button>
                     </div>
                 </nav>
 
                 <div class="container py-4">
-                    <div class="row">
+                    <div class="dashboard-grid">
                         <!-- Main Action Column -->
-                        <div class="col-lg-6 mb-4">
-                            <div class="glass-panel text-center" style="padding: 3rem 2rem;">
-                                <div id="status-badge-container" style="margin-bottom: 2rem;">
-                                    <!-- Filled by init -->
-                                </div>
-                                
-                                <div id="timer-display" style="display: none; margin-bottom: 2rem; font-family: monospace; font-size: 2.5rem; font-weight: 700; color: var(--primary);">
-                                    00:00:00
-                                </div>
+                        <div class="glass-panel d-flex flex-column align-center justify-center" style="padding: 2rem;">
+                            <div id="status-badge-container" style="margin-bottom: 1.5rem;">
+                                <!-- Filled by init -->
+                            </div>
+                            
+                            <div id="timer-display" style="display: none; margin-bottom: 1.5rem; font-family: monospace; font-size: 2.5rem; font-weight: 700; color: var(--primary);">
+                                00:00:00
+                            </div>
 
+                            <div class="clock-btn-container" style="margin: 0;">
                                 <button id="btn-clock-action" class="clock-btn">
                                     <div id="btn-icon"></div>
-                                    <span id="btn-text">Cargando...</span>
+                                    <span id="btn-text" style="font-size: 0.9rem;">Cargando...</span>
                                 </button>
-                                
-                                <div class="form-group mt-4" style="max-width: 300px; margin-left: auto; margin-right: auto;">
-                                    <input type="text" id="record-notes" class="form-control" placeholder="Añadir nota (opcional)..." style="text-align: center;">
-                                </div>
+                            </div>
+                            
+                            <div class="form-group mt-2" style="width: 100%; max-width: 280px; margin-bottom: 0;">
+                                <input type="text" id="record-notes" class="form-control" placeholder="Añadir nota (opcional)..." style="text-align: center; font-size: 0.9rem; padding: 0.5rem;">
                             </div>
                         </div>
 
                         <!-- History Column -->
-                        <div class="col-lg-6">
-                            <div class="glass-panel" style="margin-bottom: 2rem;">
-                                <h3 style="margin-top: 0;">📊 Histórico y Validación</h3>
+                        <div class="d-flex flex-column gap-1">
+                            <div class="glass-panel" style="padding: 1.5rem;">
+                                <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">📊 Histórico y Validación</h3>
                                 
-                                <div class="form-group">
-                                    <label class="form-label">Periodo a Consultar</label>
-                                    <select id="employee-month-filter" class="form-control">
+                                <div class="form-group" style="margin-bottom: 1rem;">
+                                    <label class="form-label" style="font-size: 0.8rem;">Periodo a Consultar</label>
+                                    <select id="employee-month-filter" class="form-control" style="padding: 0.5rem; font-size: 0.9rem;">
                                         <!-- Filled by init -->
                                     </select>
                                 </div>
 
                                 <div id="validation-panel" style="display: none;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: #f3f4f6; border-radius: var(--radius-sm); margin: 1.5rem 0;">
-                                        <span>Total Horas Mes:</span>
-                                        <strong id="history-total-hours" style="font-size: 1.25rem; color: var(--primary);">00:00</strong>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: rgba(0,0,0,0.03); border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                                        <span style="font-size: 0.9rem;">Total Horas Mes:</span>
+                                        <strong id="history-total-hours" style="font-size: 1.1rem; color: var(--primary);">00:00</strong>
                                     </div>
 
                                     <div id="signature-container">
@@ -63,14 +65,14 @@ export const EmployeeDashboard = {
                                 </div>
                             </div>
 
-                            <div class="glass-panel">
-                                <h3 style="margin-top: 0; font-size: 1rem;">🕒 Movimientos Recientes</h3>
+                            <div class="glass-panel" style="padding: 1.5rem; flex-grow: 1;">
+                                <h3 style="margin-top: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">🕒 Movimientos Recientes</h3>
                                 <div class="table-container">
-                                    <table class="table" id="personal-records">
+                                    <table class="table" id="personal-records" style="font-size: 0.85rem;">
                                         <thead>
                                             <tr>
                                                 <th>Fecha/Hora</th>
-                                                <th>Tipo</th>
+                                                <th style="text-align: right;">Tipo</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -131,8 +133,8 @@ export const EmployeeDashboard = {
 
                                 <!-- Listado mis ausencias -->
                                 <div class="table-container">
-                                    <table class="table" id="my-absences-table">
-                                        <thead><tr><th>Tipo</th><th>Inicio</th><th>Fin</th><th>Días</th><th>Estado</th><th>Observaciones</th></tr></thead>
+                                    <table class="table" id="my-absences-table" style="font-size: 0.85rem;">
+                                        <thead><tr><th>Tipo</th><th>Inicio</th><th>Fin</th><th style="text-align:center;">Días</th><th>Estado</th><th>Notas</th></tr></thead>
                                         <tbody><tr><td colspan="6" class="text-center text-secondary">Cargando...</td></tr></tbody>
                                     </table>
                                 </div>
@@ -141,24 +143,22 @@ export const EmployeeDashboard = {
                     </div>
 
                     <!-- Profile Section -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="glass-panel" style="padding: 2rem;">
-                                <h3 style="margin-top: 0;">⚙️ Configuración de Perfil</h3>
-                                <form id="profile-form" class="responsive-grid" style="max-width: 800px;">
-                                    <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label">Nombre para Mostrar</label>
-                                        <input type="text" id="profile-name" class="form-control" value="${user.full_name}" required>
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label">Nueva Contraseña</label>
-                                        <input type="password" id="profile-password" class="form-control" placeholder="Dejar en blanco para no cambiar">
-                                    </div>
-                                    <div style="margin-top: 1rem;">
-                                        <button type="submit" class="btn btn-primary">Actualizar Perfil</button>
-                                    </div>
-                                </form>
-                            </div>
+                    <div style="margin-top: 1.5rem;">
+                        <div class="glass-panel" style="padding: 2rem;">
+                            <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">⚙️ Configuración de Perfil</h3>
+                            <form id="profile-form" class="responsive-grid" style="max-width: 800px;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label">Nombre para Mostrar</label>
+                                    <input type="text" id="profile-name" class="form-control" value="${user.full_name}" required>
+                                </div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label">Nueva Contraseña</label>
+                                    <input type="password" id="profile-password" class="form-control" placeholder="Dejar en blanco para no cambiar">
+                                </div>
+                                <div style="margin-top: 0.5rem;">
+                                    <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.25rem; font-size: 0.9rem;">Actualizar Perfil</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
