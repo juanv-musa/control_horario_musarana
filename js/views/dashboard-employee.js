@@ -280,16 +280,15 @@ export const EmployeeDashboard = {
             return;
         }
 
-        tbody.innerHTML = recent.map(r => `
-            <tr>
-                <td style="font-size: 0.85rem; font-family: monospace;">
-                    ${new Date(r.timestamp).toLocaleString('es-ES')}
-                </td>
-                <td>
-                    <span class="badge ${r.type === 'IN' ? 'badge-active' : 'badge-inactive'}">${r.type === 'IN' ? 'ENTRADA' : 'SALIDA'}</span>
-                </td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = recent.map(r => {
+            const dateStr = new Date(r.timestamp).toLocaleString();
+            const isEntry = r.type === 'check_in';
+            const badge = `<span class="badge ${isEntry ? 'badge-success' : 'badge-danger'}">${isEntry ? 'ENTRADA' : 'SALIDA'}</span>`;
+            return `<tr>
+                <td data-label="Fecha/Hora" style="font-family:monospace;">${dateStr}</td>
+                <td data-label="Tipo" style="text-align:right;">${badge}</td>
+            </tr>`;
+        }).join('');
     },
 
     async initValidation() {
@@ -368,17 +367,17 @@ export const EmployeeDashboard = {
         const progressContainer = document.getElementById('vacation-progress-container');
         if (progressContainer) {
             progressContainer.innerHTML = `
-                <div style="background:${exhausted ? '#FEF2F2' : '#F0FDF4'};border:1px solid ${exhausted ? '#FCA5A5' : '#86EFAC'};border-radius:var(--radius-md);padding:1.25rem;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
-                        <strong style="font-size:1rem;">🌴 Vacaciones ${year}</strong>
-                        <span style="font-size:0.85rem;color:var(--text-secondary);">${used} usados · ${avail} disponibles · ${total} total</span>
+                <div style="background:${exhausted ? '#FEF2F2' : '#F0FDF4'};border:1px solid ${exhausted ? '#FCA5A5' : '#86EFAC'};border-radius:var(--radius-md);padding:1rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;flex-wrap:wrap;gap:0.25rem;">
+                        <strong style="font-size:0.95rem;">🌴 Vacaciones ${year}</strong>
+                        <span style="font-size:0.8rem;color:var(--text-secondary);">${used} de ${total} días</span>
                     </div>
-                    <div style="background:#e5e7eb;border-radius:999px;height:12px;overflow:hidden;">
+                    <div style="background:#e5e7eb;border-radius:999px;height:10px;overflow:hidden;margin: 0.5rem 0;">
                         <div style="background:${barColor};height:100%;width:${pct}%;border-radius:999px;transition:width 0.6s ease;"></div>
                     </div>
-                    <div style="display:flex;justify-content:space-between;margin-top:0.4rem;font-size:0.75rem;color:var(--text-secondary);">
+                    <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--text-secondary);flex-wrap:wrap;gap:0.5rem;">
                         <span>${pct}% consumido</span>
-                        ${exhausted ? '<span style="color:#EF4444;font-weight:700;">⚠️ Has agotado todos tus días de vacaciones del año</span>' : `<span style="color:${barColor};font-weight:600;">${avail} días disponibles</span>`}
+                        ${exhausted ? '<span style="color:#EF4444;font-weight:700;">⚠️ Agotadas</span>' : `<span style="color:${barColor};font-weight:600;">${avail} disp.</span>`}
                     </div>
                 </div>`;
         }
@@ -435,12 +434,12 @@ export const EmployeeDashboard = {
         tbody.innerHTML = absences.map(a => {
             const sc = statusConfig[a.status] || statusConfig.pending;
             return `<tr>
-                <td>${typeLabels[a.type] || a.type}</td>
-                <td style="font-family:monospace;">${a.start_date}</td>
-                <td style="font-family:monospace;">${a.end_date}</td>
-                <td><strong>${a.working_days || 0}</strong></td>
-                <td><span style="background:${sc.bg};color:${sc.color};padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">${sc.label}</span></td>
-                <td style="font-size:0.8rem;color:var(--text-secondary);">${a.notes || '-'}</td>
+                <td data-label="Tipo">${typeLabels[a.type] || a.type}</td>
+                <td data-label="Inicio" style="font-family:monospace;">${a.start_date}</td>
+                <td data-label="Fin" style="font-family:monospace;">${a.end_date}</td>
+                <td data-label="Días" style="text-align:center;"><strong>${a.working_days || 0}</strong></td>
+                <td data-label="Estado"><span style="background:${sc.bg};color:${sc.color};padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">${sc.label}</span></td>
+                <td data-label="Notas" style="font-size:0.8rem;color:var(--text-secondary);">${a.notes || '-'}</td>
             </tr>`;
         }).join('');
     }

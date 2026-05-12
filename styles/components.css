@@ -102,7 +102,13 @@
     border-radius: var(--radius-md);
     padding: 1.5rem;
     transition: all 0.3s ease;
-    height: 100%;
+}
+
+@media (max-width: 768px) {
+    .glass-panel {
+        padding: 1rem; /* Menos padding en móvil para ganar espacio */
+        border-radius: var(--radius-sm);
+    }
 }
 
 .glass-panel:hover {
@@ -243,6 +249,49 @@
     background-color: rgba(249, 250, 251, 0.5);
 }
 
+/* Transformación de tablas en tarjetas para móvil */
+@media (max-width: 768px) {
+    .table-container {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+    .table, .table thead, .table tbody, .table th, .table td, .table tr {
+        display: block;
+    }
+    .table thead {
+        display: none; /* Escondemos cabeceras en móvil */
+    }
+    .table tr {
+        background: white;
+        margin-bottom: 0.5rem; /* Reducido de 1rem a 0.5rem */
+        border-radius: var(--radius-md);
+        padding: 0.75rem; /* Reducido de 1rem a 0.75rem */
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+    .table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.35rem 0; /* Más compacto */
+        border-bottom: 1px solid #f3f4f6;
+        text-align: right;
+        font-size: 0.85rem;
+    }
+    .table td:last-child {
+        border-bottom: none;
+    }
+    .table td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        text-align: left;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+}
+
 /* Badge Status */
 .badge {
     display: inline-block;
@@ -356,9 +405,16 @@
     align-items: stretch;
 }
 
-@media (min-width: 992px) {
+@media (max-width: 768px) {
     .dashboard-grid {
-        grid-template-columns: 1fr 1fr; /* Forzar dos columnas iguales */
+        gap: 0.75rem; /* Reducido de 1.5rem a 0.75rem */
+    }
+    .container {
+        padding: 0 0.75rem; /* Más espacio para el contenido */
+    }
+    h2, h3 {
+        font-size: 1.1rem !important;
+        margin-bottom: 1rem !important;
     }
 }
 
