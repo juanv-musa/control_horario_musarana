@@ -85,18 +85,15 @@ export const EmployeeDashboard = {
                     </div>
 
                     <!-- Vacaciones y Ausencias -->
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <div class="glass-panel" style="padding:2rem;" id="panel-mis-vacaciones">
-                                <h3 style="margin-top:0;">🏖️ Mis Vacaciones y Ausencias</h3>
-
-                                <!-- Progress bar vacaciones -->
-                                <div id="vacation-progress-container" style="margin-bottom:2rem;"></div>
-
-                                <!-- Solicitar ausencia -->
-                                <div style="margin-bottom:1.5rem;">
-                                    <button id="btn-request-absence" class="btn btn-primary" style="background:#F59E0B;border:none;">+ Solicitar Ausencia</button>
-                                </div>
+                    <div style="margin-top: 1rem; width: 100%;">
+                        <div class="glass-panel" style="padding: 1rem;" id="panel-mis-vacaciones">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:0.75rem;">
+                                <h3 style="margin:0; font-size:1.25rem;">🏖️ Mis Vacaciones</h3>
+                                <button id="btn-request-absence" class="btn btn-primary" style="background:#F59E0B; border:none; padding: 0.5rem 1rem; font-weight:600;">+ Solicitar</button>
+                            </div>
+ 
+                                 <!-- Progress bar vacaciones -->
+                                 <div id="vacation-progress-container" style="margin-bottom:1.5rem;"></div>
                                 <div id="request-absence-form-container" style="display:none;padding:1.5rem;background:#FFFBEB;border-radius:var(--radius-md);margin-bottom:1.5rem;border:1px solid #F59E0B;">
                                     <h4>Nueva Solicitud</h4>
                                     <form id="request-absence-form" style="margin-top:1rem;">
@@ -143,9 +140,9 @@ export const EmployeeDashboard = {
                     </div>
 
                     <!-- Profile Section -->
-                    <div style="margin-top: 1.5rem;">
-                        <div class="glass-panel" style="padding: 2rem;">
-                            <h3 style="margin-top: 0; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">⚙️ Configuración de Perfil</h3>
+                    <div style="margin-top: 1rem; width: 100%;">
+                        <div class="glass-panel" style="padding: 1.25rem;">
+                            <h3 style="margin-top: 0; font-size: 1.15rem; display: flex; align-items: center; gap: 0.5rem;">⚙️ Configuración de Perfil</h3>
                             <form id="profile-form" class="responsive-grid" style="max-width: 800px;">
                                 <div class="form-group" style="margin-bottom: 0;">
                                     <label class="form-label">Nombre para Mostrar</label>

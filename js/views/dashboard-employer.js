@@ -29,14 +29,14 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
-                    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                            <h2 style="margin: 0;">👥 Gestión de Personal</h2>
-                            <div style="display: flex; gap: 1rem;">
-                                <select id="employer-month-filter" class="form-control" style="width: auto; background: white;">
+                    <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                            <h2 style="margin: 0; font-size: 1.4rem;">👥 Gestión de Personal</h2>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <select id="employer-month-filter" class="form-control" style="width: auto; background: white; height: 38px;">
                                     <!-- Filled dynamically -->
                                 </select>
-                                <button class="btn btn-secondary" id="btn-toggle-new-user" style="background: var(--primary); color: white; padding: 0.5rem 1rem;">+ Añadir Empleado</button>
+                                <button class="btn" id="btn-toggle-new-user" style="background: var(--primary); color: white; padding: 0.5rem 1rem; height: 38px; border: none; border-radius: var(--radius-sm); font-weight: 600;">+ Añadir Empleado</button>
                             </div>
                         </div>
                         
@@ -90,14 +90,14 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
-                    <div class="glass-panel" style="padding: 2rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-                            <h2 style="margin: 0;">📅 Registro Global de Jornada</h2>
-                            <div style="display: flex; gap: 1rem;">
-                                <select id="employer-global-month-filter" class="form-control" style="width: auto; background: white;">
+                    <div class="glass-panel" style="padding: 1.25rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                            <h2 style="margin: 0; font-size: 1.4rem;">📅 Registro Global</h2>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                <select id="employer-global-month-filter" class="form-control" style="width: auto; background: white; height: 38px;">
                                     <!-- Filled dynamically -->
                                 </select>
-                                <button class="btn btn-secondary" id="btn-add-manual-record" style="background: var(--text-primary); color: white; padding: 0.5rem 1rem;">+ Añadir Olvido</button>
+                                <button class="btn" id="btn-add-manual-record" style="background: var(--text-primary); color: white; padding: 0.5rem 1rem; height: 38px; border: none; border-radius: var(--radius-sm); font-weight: 600;">+ Añadir Olvido</button>
                             </div>
                         </div>
 
@@ -153,10 +153,10 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
-                    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;" id="panel-vacaciones">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-                            <h2 style="margin:0;">🏖️ Vacaciones y Ausencias</h2>
-                            <button class="btn btn-primary" id="btn-new-absence" style="background:#F59E0B;border:none;">+ Registrar Ausencia</button>
+                    <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem;" id="panel-vacaciones">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                            <h2 style="margin:0; font-size: 1.4rem;">🏖️ Vacaciones</h2>
+                            <button class="btn" id="btn-new-absence" style="background:#F59E0B; border:none; color:white; padding: 0.5rem 1.25rem; border-radius: var(--radius-sm); font-weight: 700;">+ Registrar</button>
                         </div>
 
                         <div id="absence-form-container" style="display:none;padding:1.5rem;background:#FFFBEB;border-radius:var(--radius-md);margin-bottom:1.5rem;border:1px solid #F59E0B;">
@@ -206,9 +206,9 @@ export const EmployerDashboard = {
                             </form>
                         </div>
 
-                        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
-                            <select id="ab-filter-user" class="form-control" style="width:auto;background:white;"><option value="ALL">Todos los empleados</option></select>
-                            <select id="ab-filter-status" class="form-control" style="width:auto;background:white;">
+                        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
+                            <select id="ab-filter-user" class="form-control" style="width:auto; min-width: 160px; background:white; height: 38px;"></select>
+                            <select id="ab-filter-status" class="form-control" style="width:auto; min-width: 150px; background:white; height: 38px;">
                                 <option value="ALL">Todos los estados</option>
                                 <option value="pending">⏳ Pendiente</option>
                                 <option value="approved">✅ Aprobada</option>
@@ -226,13 +226,13 @@ export const EmployerDashboard = {
                             </table>
                         </div>
 
-                        <div style="margin-top:2rem;">
-                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
-                                <h3 style="margin:0;">📊 Días de Vacaciones por Empleado</h3>
-                                <div style="display:flex;align-items:center;gap:0.75rem;">
-                                    <label style="font-size:0.85rem;color:var(--text-secondary);">Días por defecto (Art. 38 ET):</label>
-                                    <input type="number" id="global-vacation-days" class="form-control" value="22" min="1" max="365" style="width:80px;">
-                                    <button id="btn-apply-global-days" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.85rem;">Aplicar</button>
+                        <div style="margin-top:2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                                <h3 style="margin:0; font-size: 1.2rem;">📊 Control de Cuotas</h3>
+                                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                                    <label style="font-size:0.75rem; color:var(--text-secondary); font-weight: 600; text-transform: uppercase;">Días Base:</label>
+                                    <input type="number" id="global-vacation-days" class="form-control" value="22" min="1" max="31" style="width:65px; height: 35px; text-align: center;">
+                                    <button id="btn-apply-global-days" class="btn btn-primary" style="padding:0.4rem 0.8rem; font-size:0.8rem; height: 35px;">Aplicar</button>
                                 </div>
                             </div>
                             <div class="table-container">
@@ -246,8 +246,8 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
-                    <div class="glass-panel" style="padding: 2.5rem; margin-bottom: 2rem; border-left: 5px solid var(--danger);">
-                        <h2 style="margin: 0; color: #991B1B;">🔐 Acceso Auditoría Externa</h2>
+                    <div class="glass-panel" style="padding: 1.25rem; margin-bottom: 2rem; border-left: 5px solid var(--danger);">
+                        <h2 style="margin: 0; color: #991B1B; font-size: 1.3rem;">🔐 Acceso Auditoría</h2>
                         <p class="text-secondary" style="margin: 0.5rem 0 1.5rem 0;">Define el código (PIN) que usarán los inspectores para acceder al portal sin email.</p>
                         
                         <div style="background: white; padding: 1.5rem; border-radius: var(--radius-md); border: 1px solid var(--border); max-width: 500px;">
