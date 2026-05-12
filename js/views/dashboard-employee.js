@@ -82,6 +82,64 @@ export const EmployeeDashboard = {
                         </div>
                     </div>
 
+                    <!-- Vacaciones y Ausencias -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="glass-panel" style="padding:2rem;" id="panel-mis-vacaciones">
+                                <h3 style="margin-top:0;">🏖️ Mis Vacaciones y Ausencias</h3>
+
+                                <!-- Progress bar vacaciones -->
+                                <div id="vacation-progress-container" style="margin-bottom:2rem;"></div>
+
+                                <!-- Solicitar ausencia -->
+                                <div style="margin-bottom:1.5rem;">
+                                    <button id="btn-request-absence" class="btn btn-primary" style="background:#F59E0B;border:none;">+ Solicitar Ausencia</button>
+                                </div>
+                                <div id="request-absence-form-container" style="display:none;padding:1.5rem;background:#FFFBEB;border-radius:var(--radius-md);margin-bottom:1.5rem;border:1px solid #F59E0B;">
+                                    <h4>Nueva Solicitud</h4>
+                                    <form id="request-absence-form" style="margin-top:1rem;">
+                                        <div class="responsive-grid">
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label">Tipo</label>
+                                                <select id="req-ab-type" class="form-control" required>
+                                                    <option value="vacation">🏖️ Vacaciones</option>
+                                                    <option value="sick_leave">🤒 Baja Médica</option>
+                                                    <option value="personal">🧾 Asunto Personal</option>
+                                                    <option value="other">📋 Otro</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label">Observaciones</label>
+                                                <input type="text" id="req-ab-notes" class="form-control" placeholder="Motivo (opcional)...">
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label">Fecha Inicio</label>
+                                                <input type="date" id="req-ab-start" class="form-control" required>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0;">
+                                                <label class="form-label">Fecha Fin</label>
+                                                <input type="date" id="req-ab-end" class="form-control" required>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top:1rem;display:flex;gap:0.5rem;">
+                                            <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
+                                            <button type="button" id="btn-cancel-request" class="btn" style="background:white;border:1px solid var(--border);">Cancelar</button>
+                                        </div>
+                                        <p style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.5rem;">La solicitud quedará en estado Pendiente hasta que sea aprobada.</p>
+                                    </form>
+                                </div>
+
+                                <!-- Listado mis ausencias -->
+                                <div class="table-container">
+                                    <table class="table" id="my-absences-table">
+                                        <thead><tr><th>Tipo</th><th>Inicio</th><th>Fin</th><th>Días</th><th>Estado</th><th>Observaciones</th></tr></thead>
+                                        <tbody><tr><td colspan="6" class="text-center text-secondary">Cargando...</td></tr></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Profile Section -->
                     <div class="row mt-4">
                         <div class="col-12">
@@ -119,6 +177,7 @@ export const EmployeeDashboard = {
         await this.initClockAction();
         await this.initHistory();
         await this.initValidation();
+        await this.initMyVacations();
         this.initProfile();
     },
 
@@ -291,5 +350,98 @@ export const EmployeeDashboard = {
         } else {
             monthFilter.innerHTML = '<option value="">Sin datos aún</option>';
         }
+    },
+
+    async initMyVacations() {
+        const user = Store.getUser();
+        const year = new Date().getFullYear();
+
+        // Load allowance and used days
+        const allowance = await Store.getOrCreateAllowance(user.id);
+        const total = allowance?.total_days ?? Store.DEFAULT_VACATION_DAYS;
+        const used = await Store.getUsedVacationDays(user.id, year);
+        const avail = Math.max(0, total - used);
+        const pct = Math.min(100, Math.round((used / total) * 100));
+        const barColor = pct >= 90 ? '#EF4444' : pct >= 70 ? '#F59E0B' : '#10B981';
+        const exhausted = avail === 0;
+
+        const progressContainer = document.getElementById('vacation-progress-container');
+        if (progressContainer) {
+            progressContainer.innerHTML = `
+                <div style="background:${exhausted ? '#FEF2F2' : '#F0FDF4'};border:1px solid ${exhausted ? '#FCA5A5' : '#86EFAC'};border-radius:var(--radius-md);padding:1.25rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+                        <strong style="font-size:1rem;">🌴 Vacaciones ${year}</strong>
+                        <span style="font-size:0.85rem;color:var(--text-secondary);">${used} usados · ${avail} disponibles · ${total} total</span>
+                    </div>
+                    <div style="background:#e5e7eb;border-radius:999px;height:12px;overflow:hidden;">
+                        <div style="background:${barColor};height:100%;width:${pct}%;border-radius:999px;transition:width 0.6s ease;"></div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:0.4rem;font-size:0.75rem;color:var(--text-secondary);">
+                        <span>${pct}% consumido</span>
+                        ${exhausted ? '<span style="color:#EF4444;font-weight:700;">⚠️ Has agotado todos tus días de vacaciones del año</span>' : `<span style="color:${barColor};font-weight:600;">${avail} días disponibles</span>`}
+                    </div>
+                </div>`;
+        }
+
+        // Request form
+        document.getElementById('btn-request-absence')?.addEventListener('click', () => {
+            document.getElementById('request-absence-form').reset();
+            document.getElementById('request-absence-form-container').style.display = 'block';
+            document.getElementById('btn-request-absence').style.display = 'none';
+        });
+        document.getElementById('btn-cancel-request')?.addEventListener('click', () => {
+            document.getElementById('request-absence-form-container').style.display = 'none';
+            document.getElementById('btn-request-absence').style.display = 'block';
+        });
+        document.getElementById('request-absence-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const startVal = document.getElementById('req-ab-start').value;
+            const endVal = document.getElementById('req-ab-end').value;
+            if (endVal < startVal) return Store.showToast('La fecha de fin no puede ser anterior a la de inicio', 'error');
+            const ok = await Store.saveAbsence({
+                user_id: user.id,
+                type: document.getElementById('req-ab-type').value,
+                start_date: startVal,
+                end_date: endVal,
+                notes: document.getElementById('req-ab-notes').value,
+                status: 'pending',
+                requested_by_employee: true
+            });
+            if (ok) {
+                Store.showToast('Solicitud enviada. Quedará pendiente de aprobación.', 'success');
+                document.getElementById('request-absence-form-container').style.display = 'none';
+                document.getElementById('btn-request-absence').style.display = 'block';
+                document.getElementById('request-absence-form').reset();
+                await this.renderMyAbsences(user.id);
+            } else {
+                Store.showToast('Error al enviar la solicitud', 'error');
+            }
+        });
+
+        await this.renderMyAbsences(user.id);
+    },
+
+    async renderMyAbsences(userId) {
+        const tbody = document.querySelector('#my-absences-table tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center"><div class="loader-sm" style="display:inline-block"></div></td></tr>';
+        const absences = await Store.getAbsences({ userId });
+        if (absences.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary">No tienes ausencias registradas.</td></tr>';
+            return;
+        }
+        const typeLabels = { vacation: '🏖️ Vacaciones', sick_leave: '🤒 Baja Médica', personal: '🧾 Asunto Personal', other: '📋 Otro' };
+        const statusConfig = { pending: { label: '⏳ Pendiente', color: '#92400E', bg: '#FEF3C7' }, approved: { label: '✅ Aprobada', color: '#065F46', bg: '#D1FAE5' }, denied: { label: '❌ Denegada', color: '#991B1B', bg: '#FEE2E2' } };
+        tbody.innerHTML = absences.map(a => {
+            const sc = statusConfig[a.status] || statusConfig.pending;
+            return `<tr>
+                <td>${typeLabels[a.type] || a.type}</td>
+                <td style="font-family:monospace;">${a.start_date}</td>
+                <td style="font-family:monospace;">${a.end_date}</td>
+                <td><strong>${a.working_days || 0}</strong></td>
+                <td><span style="background:${sc.bg};color:${sc.color};padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">${sc.label}</span></td>
+                <td style="font-size:0.8rem;color:var(--text-secondary);">${a.notes || '-'}</td>
+            </tr>`;
+        }).join('');
     }
 };

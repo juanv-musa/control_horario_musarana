@@ -486,6 +486,284 @@ export const Store = {
         link.click();
         
         this.showToast('Reporte generado correctamente');
+    },
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // PDF Export — Registro mensual de jornada
+    // ─────────────────────────────────────────────────────────────────────────
+    async exportEmployeePDF(empId, monthId) {
+        const records = await this.getRecords({ userId: empId, month: monthId === 'ALL' ? null : monthId });
+        const users = await this.adminGetAllUsers();
+        const emp = users.find(u => u.id === empId);
+        const empName = emp?.full_name || empId;
+
+        if (records.length === 0) {
+            this.showToast('No hay registros para exportar', 'error');
+            return;
+        }
+
+        const hours = await this.calculateMonthlyHours(empId, monthId === 'ALL' ? null : monthId);
+        const firstRec = records[0] || {};
+        const monthLabel = monthId && monthId !== 'ALL' ? this.formatMonthLabel(monthId) : 'Todos los periodos';
+
+        const empCert = (firstRec && firstRec.is_validated)
+            ? `Validado el ${new Date(firstRec.validation_date).toLocaleDateString('es-ES')}`
+            : 'Pendiente de firma por empleado';
+        const compCert = (firstRec && firstRec.is_company_validated)
+            ? `Validado el ${new Date(firstRec.company_validation_date).toLocaleDateString('es-ES')}`
+            : 'Pendiente de revisión empresarial';
+
+        const rowsHTML = records.map(r => {
+            const d = new Date(r.timestamp);
+            const badge = r.type === 'IN'
+                ? `<span style="background:#D1FAE5;color:#065F46;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;">ENTRADA</span>`
+                : `<span style="background:#FEE2E2;color:#991B1B;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;">SALIDA</span>`;
+            return `<tr>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-family:monospace;font-size:12px;">${d.toLocaleString('es-ES')}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;">${badge}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:12px;color:#6b7280;">${r.notes || '-'}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:11px;">${r.is_validated ? '✅' : '⏳'}</td>
+                <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-size:11px;">${r.is_company_validated ? '✅' : '⏳'}</td>
+            </tr>`;
+        }).join('');
+
+        const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Registro Jornada — ${empName} — ${monthLabel}</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color:#111827; background:#fff; padding:32px; font-size:13px; }
+  .header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; border-bottom:3px solid #8CC63F; padding-bottom:16px; }
+  .logo-area h1 { font-size:22px; font-weight:800; color:#8CC63F; }
+  .logo-area p { font-size:12px; color:#6b7280; margin-top:4px; }
+  .meta { text-align:right; }
+  .meta .emp-name { font-size:17px; font-weight:700; color:#111827; }
+  .meta .period { font-size:13px; color:#6b7280; margin-top:2px; }
+  .meta .generated { font-size:11px; color:#9ca3af; margin-top:4px; }
+  .summary-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
+  .summary-box { background:#f3f4f6; border-radius:8px; padding:14px; text-align:center; }
+  .summary-box .label { font-size:11px; text-transform:uppercase; color:#6b7280; font-weight:600; letter-spacing:.05em; }
+  .summary-box .value { font-size:20px; font-weight:800; color:#111827; margin-top:4px; }
+  table { width:100%; border-collapse:collapse; margin-top:16px; }
+  thead th { background:#f9fafb; padding:10px; font-size:11px; text-transform:uppercase; color:#6b7280; font-weight:700; text-align:left; border-bottom:2px solid #e5e7eb; }
+  .cert-section { margin-top:28px; display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .cert-box { border:1px solid #e5e7eb; border-radius:8px; padding:14px; }
+  .cert-box .cert-title { font-size:11px; text-transform:uppercase; font-weight:700; color:#6b7280; margin-bottom:6px; }
+  .cert-box .cert-value { font-size:13px; color:#111827; }
+  .legal-note { margin-top:20px; font-size:10px; color:#9ca3af; border-top:1px solid #e5e7eb; padding-top:12px; }
+  @media print { body { padding:16px; } }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-area">
+      <h1>MUSARAÑA</h1>
+      <p>Registro de Control Horario</p>
+      <p style="margin-top:2px;color:#8CC63F;font-size:11px;">Art. 34.9 Estatuto de los Trabajadores</p>
+    </div>
+    <div class="meta">
+      <div class="emp-name">${empName}</div>
+      <div class="period">📅 ${monthLabel}</div>
+      <div class="generated">Generado: ${new Date().toLocaleString('es-ES')}</div>
+      <div class="generated">Por: ${this.getUser()?.full_name || 'Sistema'}</div>
+    </div>
+  </div>
+
+  <div class="summary-grid">
+    <div class="summary-box">
+      <div class="label">Total registros</div>
+      <div class="value">${records.length}</div>
+    </div>
+    <div class="summary-box">
+      <div class="label">Horas trabajadas</div>
+      <div class="value">${this.formatTime(hours)}</div>
+    </div>
+    <div class="summary-box">
+      <div class="label">Estado firma</div>
+      <div class="value" style="font-size:14px;">${firstRec.is_validated ? '✅ Firmado' : '⏳ Pendiente'}</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha y Hora</th>
+        <th>Tipo</th>
+        <th>Observaciones</th>
+        <th>Firma Emp.</th>
+        <th>Firma Emp.</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rowsHTML}
+    </tbody>
+  </table>
+
+  <div class="cert-section">
+    <div class="cert-box">
+      <div class="cert-title">✍️ Certificación Empleado</div>
+      <div class="cert-value">${empCert}</div>
+    </div>
+    <div class="cert-box">
+      <div class="cert-title">🏢 Certificación Empresa</div>
+      <div class="cert-value">${compCert}</div>
+    </div>
+  </div>
+
+  <div class="legal-note">
+    Documento generado automáticamente por el sistema de control horario MUSARAÑA conforme al Real Decreto-ley 8/2019 
+    y el Art. 34.9 del Estatuto de los Trabajadores (ET). La empresa está obligada a conservar estos registros durante 
+    4 años. Este documento tiene validez legal como registro de jornada laboral.
+  </div>
+</body>
+</html>`;
+
+        const win = window.open('', '_blank');
+        win.document.write(html);
+        win.document.close();
+        setTimeout(() => { win.print(); }, 500);
+
+        this.showToast('PDF generado — usa Imprimir → Guardar como PDF', 'success');
+    },
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Vacaciones y Ausencias
+    // ─────────────────────────────────────────────────────────────────────────
+
+    // Tipos de ausencia permitidos
+    ABSENCE_TYPES: {
+        vacation: '🏖️ Vacaciones',
+        sick_leave: '🤒 Baja Médica',
+        personal: '🧾 Asunto Personal',
+        other: '📋 Otro'
+    },
+
+    ABSENCE_STATUSES: {
+        pending: { label: 'Pendiente', color: '#F59E0B', bg: '#FEF3C7' },
+        approved: { label: 'Aprobada', color: '#059669', bg: '#D1FAE5' },
+        denied: { label: 'Denegada', color: '#DC2626', bg: '#FEE2E2' }
+    },
+
+    async getAbsences(filters = {}) {
+        let query = supabaseClient
+            .from('absences')
+            .select('*, profiles(full_name)')
+            .order('start_date', { ascending: false });
+
+        if (filters.userId && filters.userId !== 'ALL') {
+            query = query.eq('user_id', filters.userId);
+        }
+        if (filters.status && filters.status !== 'ALL') {
+            query = query.eq('status', filters.status);
+        }
+        if (filters.year) {
+            query = query.gte('start_date', `${filters.year}-01-01`)
+                         .lte('start_date', `${filters.year}-12-31`);
+        }
+
+        const { data, error } = await query;
+        if (error) console.error('getAbsences error:', error);
+        return data || [];
+    },
+
+    async saveAbsence(absenceData) {
+        const days = this.calcWorkingDays(absenceData.start_date, absenceData.end_date);
+        const payload = {
+            user_id: absenceData.user_id,
+            type: absenceData.type,
+            start_date: absenceData.start_date,
+            end_date: absenceData.end_date,
+            working_days: days,
+            notes: (absenceData.notes || '').trim(),
+            status: absenceData.status || 'pending',
+            requested_by_employee: absenceData.requested_by_employee || false
+        };
+
+        if (absenceData.id) {
+            const { error } = await supabaseClient.from('absences').update(payload).eq('id', absenceData.id);
+            return !error;
+        } else {
+            const { error } = await supabaseClient.from('absences').insert(payload);
+            return !error;
+        }
+    },
+
+    async updateAbsenceStatus(absenceId, status) {
+        const { error } = await supabaseClient
+            .from('absences')
+            .update({ status, reviewed_at: new Date().toISOString() })
+            .eq('id', absenceId);
+        return !error;
+    },
+
+    async deleteAbsence(absenceId) {
+        const { error } = await supabaseClient.from('absences').delete().eq('id', absenceId);
+        return !error;
+    },
+
+    // Calculate working days between two dates (Mon–Fri, no Spanish bank holidays)
+    calcWorkingDays(startStr, endStr) {
+        const start = new Date(startStr + 'T00:00:00');
+        const end = new Date(endStr + 'T00:00:00');
+        let count = 0;
+        const cur = new Date(start);
+        while (cur <= end) {
+            const day = cur.getDay();
+            if (day !== 0 && day !== 6) count++;
+            cur.setDate(cur.getDate() + 1);
+        }
+        return count;
+    },
+
+    // ─── Vacation Allowances ──────────────────────────────────────────────────
+    DEFAULT_VACATION_DAYS: 22,
+
+    async getVacationAllowances() {
+        const { data, error } = await supabaseClient
+            .from('vacation_allowances')
+            .select('*');
+        if (error) console.error('getVacationAllowances error:', error);
+        return data || [];
+    },
+
+    async getOrCreateAllowance(userId) {
+        const { data } = await supabaseClient
+            .from('vacation_allowances')
+            .select('*')
+            .eq('user_id', userId)
+            .single();
+
+        if (data) return data;
+
+        // Create default
+        const { data: newRow } = await supabaseClient
+            .from('vacation_allowances')
+            .insert({ user_id: userId, total_days: this.DEFAULT_VACATION_DAYS })
+            .select()
+            .single();
+        return newRow;
+    },
+
+    async updateAllowance(userId, totalDays) {
+        // Upsert
+        const { error } = await supabaseClient
+            .from('vacation_allowances')
+            .upsert({ user_id: userId, total_days: totalDays }, { onConflict: 'user_id' });
+        return !error;
+    },
+
+    async getUsedVacationDays(userId, year) {
+        const absences = await this.getAbsences({
+            userId,
+            status: 'approved',
+            year: year || new Date().getFullYear()
+        });
+        // Only count vacation type
+        return absences
+            .filter(a => a.type === 'vacation')
+            .reduce((sum, a) => sum + (a.working_days || 0), 0);
     }
 };
 

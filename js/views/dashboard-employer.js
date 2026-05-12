@@ -153,6 +153,99 @@ export const EmployerDashboard = {
                         </div>
                     </div>
 
+                    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2rem;" id="panel-vacaciones">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+                            <h2 style="margin:0;">🏖️ Vacaciones y Ausencias</h2>
+                            <button class="btn btn-primary" id="btn-new-absence" style="background:#F59E0B;border:none;">+ Registrar Ausencia</button>
+                        </div>
+
+                        <div id="absence-form-container" style="display:none;padding:1.5rem;background:#FFFBEB;border-radius:var(--radius-md);margin-bottom:1.5rem;border:1px solid #F59E0B;">
+                            <h4 id="absence-form-title">Nueva Ausencia</h4>
+                            <form id="absence-form" style="margin-top:1rem;">
+                                <input type="hidden" id="ab-id">
+                                <div class="responsive-grid">
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Empleado</label>
+                                        <select id="ab-user" class="form-control" required></select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Tipo</label>
+                                        <select id="ab-type" class="form-control" required>
+                                            <option value="vacation">🏖️ Vacaciones</option>
+                                            <option value="sick_leave">🤒 Baja Médica</option>
+                                            <option value="personal">🧾 Asunto Personal</option>
+                                            <option value="other">📋 Otro</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Fecha Inicio</label>
+                                        <input type="date" id="ab-start" class="form-control" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Fecha Fin</label>
+                                        <input type="date" id="ab-end" class="form-control" required>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Estado</label>
+                                        <select id="ab-status" class="form-control">
+                                            <option value="approved">✅ Aprobada</option>
+                                            <option value="pending">⏳ Pendiente</option>
+                                            <option value="denied">❌ Denegada</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom:0;">
+                                        <label class="form-label">Observaciones</label>
+                                        <input type="text" id="ab-notes" class="form-control" placeholder="Opcional...">
+                                    </div>
+                                </div>
+                                <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <button type="button" id="btn-cancel-absence" class="btn" style="background:white;border:1px solid var(--border);">Cancelar</button>
+                                    <button type="button" id="btn-delete-absence" class="btn" style="background:var(--danger);color:white;display:none;margin-left:auto;">Eliminar</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;">
+                            <select id="ab-filter-user" class="form-control" style="width:auto;background:white;"><option value="ALL">Todos los empleados</option></select>
+                            <select id="ab-filter-status" class="form-control" style="width:auto;background:white;">
+                                <option value="ALL">Todos los estados</option>
+                                <option value="pending">⏳ Pendiente</option>
+                                <option value="approved">✅ Aprobada</option>
+                                <option value="denied">❌ Denegada</option>
+                            </select>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table" id="absences-table">
+                                <thead><tr>
+                                    <th>Empleado</th><th>Tipo</th><th>Inicio</th><th>Fin</th>
+                                    <th>Días</th><th>Estado</th><th style="text-align:right;">Acciones</th>
+                                </tr></thead>
+                                <tbody><tr><td colspan="7" class="text-center text-secondary">Cargando...</td></tr></tbody>
+                            </table>
+                        </div>
+
+                        <div style="margin-top:2rem;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+                                <h3 style="margin:0;">📊 Días de Vacaciones por Empleado</h3>
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <label style="font-size:0.85rem;color:var(--text-secondary);">Días por defecto (Art. 38 ET):</label>
+                                    <input type="number" id="global-vacation-days" class="form-control" value="22" min="1" max="365" style="width:80px;">
+                                    <button id="btn-apply-global-days" class="btn btn-primary" style="padding:0.5rem 1rem;font-size:0.85rem;">Aplicar</button>
+                                </div>
+                            </div>
+                            <div class="table-container">
+                                <table class="table" id="allowances-table">
+                                    <thead><tr>
+                                        <th>Empleado</th><th>Total Asignado</th><th>Días Usados</th><th>Disponibles</th><th style="min-width:150px;">Progreso</th>
+                                    </tr></thead>
+                                    <tbody><tr><td colspan="5" class="text-center text-secondary">Cargando...</td></tr></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="glass-panel" style="padding: 2.5rem; margin-bottom: 2rem; border-left: 5px solid var(--danger);">
                         <h2 style="margin: 0; color: #991B1B;">🔐 Acceso Auditoría Externa</h2>
                         <p class="text-secondary" style="margin: 0.5rem 0 1.5rem 0;">Define el código (PIN) que usarán los inspectores para acceder al portal sin email.</p>
@@ -443,6 +536,7 @@ export const EmployerDashboard = {
         }
         
         await this.renderGlobalRecords(globalTargetMonth);
+        await this.initVacations();
     },
 
     async updateSummaryStats() {
@@ -599,7 +693,8 @@ export const EmployerDashboard = {
                         ${isEmployeeSigned && !isCompanySigned ? 
                             `<button class="btn btn-company-sign" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; background: #6366F1; color: white;">✍️ Firma Empresa</button>` : ''
                         }
-                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="CSV de este mes">⬇️ Reporte</button>
+                        <button class="btn btn-export-user" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: var(--primary); color: white; border: none;" title="CSV de este mes">📄 CSV</button>
+                        <button class="btn btn-export-pdf" data-id="${u.id}" style="padding: 0.35rem 0.6rem; font-size: 0.8rem; background: #6366F1; color: white; border: none;" title="PDF de este mes">📋 PDF</button>
                     </td>
                 </tr>
             `;
@@ -649,13 +744,212 @@ export const EmployerDashboard = {
 
         document.querySelectorAll('.btn-export-user').forEach(btn => {
             btn.onclick = async (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 const id = e.currentTarget.getAttribute('data-id');
                 const filter = document.getElementById('employer-month-filter');
-                const tMonth = filter ? filter.value : 'ALL';
-                await Store.exportEmployeeCSV(id, tMonth);
-                return false;
+                await Store.exportEmployeeCSV(id, filter ? filter.value : 'ALL');
+            };
+        });
+
+        document.querySelectorAll('.btn-export-pdf').forEach(btn => {
+            btn.onclick = async (e) => {
+                e.preventDefault(); e.stopPropagation();
+                const id = e.currentTarget.getAttribute('data-id');
+                const filter = document.getElementById('employer-month-filter');
+                await Store.exportEmployeePDF(id, filter ? filter.value : 'ALL');
+            };
+        });
+    },
+
+    async initVacations() {
+        const users = await Store.adminGetAllUsers();
+        const employees = users.filter(u => u.role === 'employee');
+
+        const abUserSel = document.getElementById('ab-user');
+        if (abUserSel) abUserSel.innerHTML = employees.map(u => `<option value="${u.id}">${u.full_name}</option>`).join('');
+
+        const abFilterUser = document.getElementById('ab-filter-user');
+        if (abFilterUser) {
+            abFilterUser.innerHTML = '<option value="ALL">Todos los empleados</option>' + employees.map(u => `<option value="${u.id}">${u.full_name}</option>`).join('');
+        }
+
+        const getFilters = () => ({
+            userId: document.getElementById('ab-filter-user')?.value || 'ALL',
+            status: document.getElementById('ab-filter-status')?.value || 'ALL'
+        });
+
+        document.getElementById('ab-filter-user')?.addEventListener('change', () => this.renderAbsences(getFilters(), employees));
+        document.getElementById('ab-filter-status')?.addEventListener('change', () => this.renderAbsences(getFilters(), employees));
+
+        document.getElementById('btn-new-absence')?.addEventListener('click', () => {
+            document.getElementById('absence-form').reset();
+            document.getElementById('ab-id').value = '';
+            document.getElementById('absence-form-title').textContent = 'Nueva Ausencia';
+            document.getElementById('btn-delete-absence').style.display = 'none';
+            document.getElementById('absence-form-container').style.display = 'block';
+            document.getElementById('btn-new-absence').style.display = 'none';
+        });
+
+        document.getElementById('btn-cancel-absence')?.addEventListener('click', () => {
+            document.getElementById('absence-form-container').style.display = 'none';
+            document.getElementById('btn-new-absence').style.display = 'block';
+        });
+
+        document.getElementById('btn-delete-absence')?.addEventListener('click', async () => {
+            const id = document.getElementById('ab-id').value;
+            if (!id) return;
+            if (confirm('¿Eliminar esta ausencia?')) {
+                const ok = await Store.deleteAbsence(id);
+                if (ok) {
+                    Store.showToast('Ausencia eliminada', 'success');
+                    document.getElementById('absence-form-container').style.display = 'none';
+                    document.getElementById('btn-new-absence').style.display = 'block';
+                    await this.renderAbsences(getFilters(), employees);
+                    await this.renderVacationAllowances(employees);
+                }
+            }
+        });
+
+        document.getElementById('absence-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('ab-id').value;
+            const ok = await Store.saveAbsence({
+                id: id || null,
+                user_id: document.getElementById('ab-user').value,
+                type: document.getElementById('ab-type').value,
+                start_date: document.getElementById('ab-start').value,
+                end_date: document.getElementById('ab-end').value,
+                status: document.getElementById('ab-status').value,
+                notes: document.getElementById('ab-notes').value,
+                requested_by_employee: false
+            });
+            if (ok) {
+                Store.showToast(id ? 'Ausencia actualizada' : 'Ausencia registrada', 'success');
+                document.getElementById('absence-form-container').style.display = 'none';
+                document.getElementById('btn-new-absence').style.display = 'block';
+                document.getElementById('absence-form').reset();
+                await this.renderAbsences(getFilters(), employees);
+                await this.renderVacationAllowances(employees);
+            } else {
+                Store.showToast('Error al guardar la ausencia', 'error');
+            }
+        });
+
+        document.getElementById('btn-apply-global-days')?.addEventListener('click', async () => {
+            const days = parseInt(document.getElementById('global-vacation-days').value);
+            if (!days || days < 1) return Store.showToast('Número de días inválido', 'error');
+            if (!confirm(`¿Aplicar ${days} días a todos los empleados sin asignación personalizada?`)) return;
+            for (const emp of employees) {
+                await Store.updateAllowance(emp.id, days);
+            }
+            Store.showToast('Días actualizados para todos los empleados', 'success');
+            await this.renderVacationAllowances(employees);
+        });
+
+        await this.renderAbsences(getFilters(), employees);
+        await this.renderVacationAllowances(employees);
+    },
+
+    async renderAbsences(filters = {}, employees = []) {
+        const tbody = document.querySelector('#absences-table tbody');
+        if (!tbody) return;
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center"><div class="loader-sm" style="display:inline-block"></div></td></tr>';
+        const absences = await Store.getAbsences(filters);
+        if (absences.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center text-secondary">No hay ausencias registradas.</td></tr>';
+            return;
+        }
+        const typeLabels = { vacation: '🏖️ Vacaciones', sick_leave: '🤒 Baja Médica', personal: '🧾 Asunto Personal', other: '📋 Otro' };
+        const statusConfig = { pending: { label: 'Pendiente', color: '#92400E', bg: '#FEF3C7' }, approved: { label: 'Aprobada', color: '#065F46', bg: '#D1FAE5' }, denied: { label: 'Denegada', color: '#991B1B', bg: '#FEE2E2' } };
+        tbody.innerHTML = absences.map(a => {
+            const empName = a.profiles?.full_name || employees.find(u => u.id === a.user_id)?.full_name || a.user_id;
+            const sc = statusConfig[a.status] || statusConfig.pending;
+            const badge = `<span style="background:${sc.bg};color:${sc.color};padding:2px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;">${sc.label}</span>`;
+            return `<tr>
+                <td style="font-weight:500;">${empName}</td>
+                <td>${typeLabels[a.type] || a.type}</td>
+                <td style="font-family:monospace;">${a.start_date}</td>
+                <td style="font-family:monospace;">${a.end_date}</td>
+                <td><strong>${a.working_days || 0}</strong> días</td>
+                <td>${badge}</td>
+                <td style="text-align:right;">
+                    <div style="display:flex;justify-content:flex-end;gap:0.4rem;flex-wrap:wrap;">
+                        ${a.status !== 'approved' ? `<button class="btn-ab-approve" data-id="${a.id}" style="background:#D1FAE5;color:#065F46;border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">✅ Aprobar</button>` : ''}
+                        ${a.status !== 'denied' ? `<button class="btn-ab-deny" data-id="${a.id}" style="background:#FEE2E2;color:#991B1B;border:none;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;">❌ Denegar</button>` : ''}
+                        <button class="btn-ab-edit" data-id="${a.id}" data-user="${a.user_id}" data-type="${a.type}" data-start="${a.start_date}" data-end="${a.end_date}" data-status="${a.status}" data-notes="${a.notes || ''}" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:3px;">✏️</button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
+        document.querySelectorAll('.btn-ab-approve').forEach(btn => {
+            btn.onclick = async () => {
+                const ok = await Store.updateAbsenceStatus(btn.dataset.id, 'approved');
+                if (ok) { Store.showToast('Ausencia aprobada', 'success'); await this.renderAbsences(filters, employees); await this.renderVacationAllowances(employees); }
+            };
+        });
+        document.querySelectorAll('.btn-ab-deny').forEach(btn => {
+            btn.onclick = async () => {
+                const ok = await Store.updateAbsenceStatus(btn.dataset.id, 'denied');
+                if (ok) { Store.showToast('Ausencia denegada', 'success'); await this.renderAbsences(filters, employees); await this.renderVacationAllowances(employees); }
+            };
+        });
+        document.querySelectorAll('.btn-ab-edit').forEach(btn => {
+            btn.onclick = () => {
+                const d = btn.dataset;
+                document.getElementById('ab-id').value = d.id;
+                document.getElementById('ab-user').value = d.user;
+                document.getElementById('ab-type').value = d.type;
+                document.getElementById('ab-start').value = d.start;
+                document.getElementById('ab-end').value = d.end;
+                document.getElementById('ab-status').value = d.status;
+                document.getElementById('ab-notes').value = d.notes;
+                document.getElementById('absence-form-title').textContent = 'Editar Ausencia';
+                document.getElementById('btn-delete-absence').style.display = 'block';
+                document.getElementById('absence-form-container').style.display = 'block';
+                document.getElementById('btn-new-absence').style.display = 'none';
+                document.getElementById('panel-vacaciones').scrollIntoView({ behavior: 'smooth' });
+            };
+        });
+    },
+
+    async renderVacationAllowances(employees = []) {
+        const tbody = document.querySelector('#allowances-table tbody');
+        if (!tbody) return;
+        const year = new Date().getFullYear();
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center"><div class="loader-sm" style="display:inline-block"></div></td></tr>';
+        const rows = await Promise.all(employees.filter(u => u.role === 'employee').map(async u => {
+            const allowance = await Store.getOrCreateAllowance(u.id);
+            const total = allowance?.total_days ?? Store.DEFAULT_VACATION_DAYS;
+            const used = await Store.getUsedVacationDays(u.id, year);
+            const avail = Math.max(0, total - used);
+            const pct = Math.min(100, Math.round((used / total) * 100));
+            const barColor = pct >= 90 ? '#EF4444' : pct >= 70 ? '#F59E0B' : '#10B981';
+            return `<tr>
+                <td style="font-weight:500;">${u.full_name}</td>
+                <td style="text-align:center;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;justify-content:center;">
+                        <strong>${total}</strong>
+                        <button class="btn-edit-allowance" data-id="${u.id}" data-current="${total}" style="background:none;border:none;cursor:pointer;color:var(--text-secondary);padding:2px;">✏️</button>
+                    </div>
+                </td>
+                <td style="text-align:center;"><strong style="color:#EF4444;">${used}</strong></td>
+                <td style="text-align:center;"><strong style="color:#10B981;">${avail}</strong></td>
+                <td>
+                    <div style="background:#e5e7eb;border-radius:999px;height:10px;overflow:hidden;">
+                        <div style="background:${barColor};height:100%;width:${pct}%;border-radius:999px;transition:width 0.5s ease;"></div>
+                    </div>
+                    <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:2px;text-align:center;">${pct}% usado</div>
+                </td>
+            </tr>`;
+        }));
+        tbody.innerHTML = rows.join('');
+        document.querySelectorAll('.btn-edit-allowance').forEach(btn => {
+            btn.onclick = async () => {
+                const newVal = prompt(`Días de vacaciones para este empleado (actual: ${btn.dataset.current}):`, btn.dataset.current);
+                if (!newVal || isNaN(newVal) || parseInt(newVal) < 1) return;
+                const ok = await Store.updateAllowance(btn.dataset.id, parseInt(newVal));
+                if (ok) { Store.showToast('Días actualizados', 'success'); await this.renderVacationAllowances(employees); }
             };
         });
     }
