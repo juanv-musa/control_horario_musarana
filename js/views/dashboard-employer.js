@@ -207,8 +207,8 @@ export const EmployerDashboard = {
                         </div>
 
                         <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem;">
-                            <select id="ab-filter-user" class="form-control" style="width:auto; min-width: 160px; background:white; height: 38px;"></select>
-                            <select id="ab-filter-status" class="form-control" style="width:auto; min-width: 150px; background:white; height: 38px;">
+                            <select id="ab-filter-user" class="form-control" style="width:auto; min-width: 160px; background:white; font-size: 0.85rem; padding: 0.4rem 2rem 0.4rem 0.75rem;"></select>
+                            <select id="ab-filter-status" class="form-control" style="width:auto; min-width: 150px; background:white; font-size: 0.85rem; padding: 0.4rem 2rem 0.4rem 0.75rem;">
                                 <option value="ALL">Todos los estados</option>
                                 <option value="pending">⏳ Pendiente</option>
                                 <option value="approved">✅ Aprobada</option>
