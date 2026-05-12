@@ -44,10 +44,8 @@ export const LoginView = {
                     </div>
                 </div>
 
-                <footer>
-                    <img src="assets/logo.png" alt="MUSARAÑA">
-                    <div class="footer-tag">Sistema de Registro Horario Certificado</div>
-                    <div class="copyright">Musaraña &copy; 2026 &bull; Gestión Integral de Museos</div>
+                <footer class="glass-panel" style="width: 100%; max-width: 420px; padding: 1.5rem; margin-bottom: 2rem; text-align: center;">
+                    <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>
         `;

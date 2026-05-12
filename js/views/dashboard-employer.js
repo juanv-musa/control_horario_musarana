@@ -283,9 +283,7 @@ export const EmployerDashboard = {
                 </div>
                 
                 <footer>
-                    <img src="assets/logo.png" alt="MUSARAÑA">
-                    <div class="footer-tag">Sistema de Registro Horario Certificado</div>
-                    <div class="copyright">Musaraña &copy; 2026 &bull; Gestión Integral de Museos</div>
+                    <p>Musaraña &copy; 2026</p>
                 </footer>
             </div>
         `;
