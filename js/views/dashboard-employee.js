@@ -71,13 +71,47 @@ export const EmployeeDashboard = {
                             </div>
 
                             <div class="glass-panel" style="padding: 1.5rem; flex-grow: 1;">
-                                <h3 style="margin-top: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">🕒 Movimientos Recientes</h3>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h3 style="margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">🕒 Movimientos Recientes</h3>
+                                    <button class="btn" id="btn-add-manual-record" style="background: var(--text-primary); color: white; padding: 0.35rem 0.75rem; font-size: 0.8rem; border: none; border-radius: var(--radius-sm); font-weight: 600;">+ Registrar Olvido</button>
+                                </div>
+
+                                <!-- Manual Record / Edit Form -->
+                                <div id="record-form-container" style="display: none; padding: 1.25rem; background: #EEF2FF; border-radius: var(--radius-md); margin-bottom: 1.5rem; border: 1px solid #6366F1;">
+                                    <h4 id="record-form-title" style="margin-top: 0; font-size: 0.95rem;">Registrar Olvido</h4>
+                                    <form id="record-form" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                        <input type="hidden" id="rf-id">
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" style="font-size: 0.75rem;">Fecha y Hora</label>
+                                            <input type="datetime-local" id="rf-timestamp" class="form-control" required style="font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" style="font-size: 0.75rem;">Tipo de Marca</label>
+                                            <select id="rf-type" class="form-control" required style="font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                                                <option value="IN">ENTRADA</option>
+                                                <option value="OUT">SALIDA</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" style="font-size: 0.75rem;">Observación / Motivo</label>
+                                            <input type="text" id="rf-notes" class="form-control" placeholder="Ej: Olvido de fichaje al entrar" style="font-size: 0.85rem; padding: 0.4rem 0.6rem;">
+                                        </div>
+                                        <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; align-items: center;">
+                                            <button type="submit" class="btn btn-primary" style="background: #4F46E5; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Guardar</button>
+                                            <button type="button" class="btn" id="btn-cancel-record" style="background: white; border: 1px solid var(--border); padding: 0.4rem 0.8rem; font-size: 0.8rem;">Cancelar</button>
+                                            <button type="button" class="btn" id="btn-delete-record" style="background: var(--danger); color: white; display: none; margin-left: auto; padding: 0.4rem 0.8rem; font-size: 0.8rem;">Eliminar</button>
+                                        </div>
+                                    </form>
+                                </div>
+
                                 <div class="table-container">
                                     <table class="table" id="personal-records" style="font-size: 0.85rem;">
                                         <thead>
                                             <tr>
                                                 <th>Fecha/Hora</th>
-                                                <th style="text-align: right;">Tipo</th>
+                                                <th>Tipo</th>
+                                                <th>Notas</th>
+                                                <th style="text-align: right; width: 60px;">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -277,7 +311,7 @@ export const EmployeeDashboard = {
 
         const recent = records.slice(0, 5);
         if (recent.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="text-center text-secondary">No hay movimientos.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary">No hay movimientos.</td></tr>';
             return;
         }
 
@@ -287,9 +321,149 @@ export const EmployeeDashboard = {
             const badge = `<span class="badge ${isEntry ? 'badge-success' : 'badge-danger'}">${isEntry ? 'ENTRADA' : 'SALIDA'}</span>`;
             return `<tr>
                 <td data-label="Fecha/Hora" style="font-family:monospace;">${dateStr}</td>
-                <td data-label="Tipo" style="text-align:right;">${badge}</td>
+                <td data-label="Tipo">${badge}</td>
+                <td data-label="Notas" style="font-size: 0.8rem; color: var(--text-secondary); max-width: 120px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="${r.notes || ''}">${r.notes ? r.notes : '<span style="opacity:0.3">-</span>'}</td>
+                <td data-label="Acciones" style="text-align: right;">
+                    <div style="display: flex; justify-content: flex-end; gap: 0.25rem; align-items: center;">
+                        <button class="btn-edit-record" 
+                                data-id="${r.id}" 
+                                data-timestamp="${r.timestamp}" 
+                                data-type="${r.type}" 
+                                data-notes="${r.notes || ''}"
+                                style="background: none; border: none; cursor: pointer; color: var(--primary); padding: 0.25rem;" title="Corregir registro">✏️</button>
+                        <button class="btn-delete-record-direct" 
+                                data-id="${r.id}"
+                                style="background: none; border: none; cursor: pointer; color: var(--danger); padding: 0.25rem;" title="Eliminar registro">🗑️</button>
+                    </div>
+                </td>
             </tr>`;
         }).join('');
+
+        // Form elements
+        const recordFormContainer = document.getElementById('record-form-container');
+        const recordForm = document.getElementById('record-form');
+        const btnAddRecord = document.getElementById('btn-add-manual-record');
+        const btnCancelRecord = document.getElementById('btn-cancel-record');
+        const btnDeleteRecord = document.getElementById('btn-delete-record');
+
+        if (btnAddRecord && !btnAddRecord.dataset.listener) {
+            btnAddRecord.dataset.listener = 'true';
+            btnAddRecord.addEventListener('click', () => {
+                recordForm.reset();
+                document.getElementById('rf-id').value = '';
+                document.getElementById('record-form-title').textContent = 'Registrar Olvido';
+                recordFormContainer.style.display = 'block';
+                btnAddRecord.style.display = 'none';
+                btnDeleteRecord.style.display = 'none';
+                
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                document.getElementById('rf-timestamp').value = now.toISOString().slice(0, 16);
+            });
+        }
+
+        if (btnCancelRecord && !btnCancelRecord.dataset.listener) {
+            btnCancelRecord.dataset.listener = 'true';
+            btnCancelRecord.addEventListener('click', () => {
+                recordFormContainer.style.display = 'none';
+                btnAddRecord.style.display = 'block';
+            });
+        }
+
+        if (btnDeleteRecord && !btnDeleteRecord.dataset.listener) {
+            btnDeleteRecord.dataset.listener = 'true';
+            btnDeleteRecord.addEventListener('click', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('rf-id').value;
+                if (!id) return;
+                
+                if (confirm('¿Estás seguro de que deseas eliminar este registro por completo?')) {
+                    const success = await Store.adminDeleteRecord(id);
+                    if (success) {
+                        Store.showToast('Registro eliminado con éxito', 'success');
+                        recordFormContainer.style.display = 'none';
+                        btnAddRecord.style.display = 'block';
+                        await EmployeeDashboard.initHistory();
+                        await EmployeeDashboard.initValidation();
+                        await EmployeeDashboard.initClockAction();
+                    }
+                }
+            });
+        }
+
+        if (recordForm && !recordForm.dataset.listener) {
+            recordForm.dataset.listener = 'true';
+            recordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('rf-id').value;
+                const timestampInput = document.getElementById('rf-timestamp').value;
+                
+                const [datePart, timePart] = timestampInput.split('T');
+                const [year, month, day] = datePart.split('-');
+                const [hours, minutes] = timePart.split(':');
+                const localDate = new Date(year, month - 1, day, hours, minutes);
+                const timestamp = localDate.toISOString();
+                
+                const type = document.getElementById('rf-type').value;
+                const notes = document.getElementById('rf-notes').value;
+
+                let success = false;
+                if (id) {
+                    success = await Store.adminUpdateRecord(id, { timestamp, type, notes });
+                } else {
+                    success = await Store.adminAddRecord(user.id, user.full_name, timestamp, type, notes);
+                }
+
+                if (success) {
+                    Store.showToast(id ? 'Registro actualizado con éxito' : 'Registro añadido con éxito', 'success');
+                    recordFormContainer.style.display = 'none';
+                    btnAddRecord.style.display = 'block';
+                    await EmployeeDashboard.initHistory();
+                    await EmployeeDashboard.initValidation();
+                    await EmployeeDashboard.initClockAction();
+                }
+            });
+        }
+
+        // Row Action Buttons
+        document.querySelectorAll('.btn-edit-record').forEach(btn => {
+            btn.onclick = (e) => {
+                const id = btn.getAttribute('data-id');
+                const timestamp = btn.getAttribute('data-timestamp');
+                const type = btn.getAttribute('data-type');
+                const notes = btn.getAttribute('data-notes');
+
+                document.getElementById('rf-id').value = id;
+                const date = new Date(timestamp);
+                date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+                document.getElementById('rf-timestamp').value = date.toISOString().slice(0, 16);
+                document.getElementById('rf-type').value = type;
+                document.getElementById('rf-notes').value = notes;
+
+                document.getElementById('record-form-title').textContent = 'Corregir Registro';
+                recordFormContainer.style.display = 'block';
+                btnAddRecord.style.display = 'none';
+                btnDeleteRecord.style.display = 'block';
+                
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            };
+        });
+
+        document.querySelectorAll('.btn-delete-record-direct').forEach(btn => {
+            btn.onclick = async (e) => {
+                e.preventDefault();
+                const id = btn.getAttribute('data-id');
+                if (confirm('¿Estás seguro de que deseas eliminar este registro por completo?')) {
+                    const success = await Store.adminDeleteRecord(id);
+                    if (success) {
+                        Store.showToast('Registro eliminado con éxito', 'success');
+                        await EmployeeDashboard.initHistory();
+                        await EmployeeDashboard.initValidation();
+                        await EmployeeDashboard.initClockAction();
+                    }
+                }
+            };
+        });
     },
 
     async initValidation() {
