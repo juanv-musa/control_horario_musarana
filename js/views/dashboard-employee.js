@@ -283,7 +283,7 @@ export const EmployeeDashboard = {
 
         tbody.innerHTML = recent.map(r => {
             const dateStr = new Date(r.timestamp).toLocaleString();
-            const isEntry = r.type === 'check_in';
+            const isEntry = r.type === 'IN';
             const badge = `<span class="badge ${isEntry ? 'badge-success' : 'badge-danger'}">${isEntry ? 'ENTRADA' : 'SALIDA'}</span>`;
             return `<tr>
                 <td data-label="Fecha/Hora" style="font-family:monospace;">${dateStr}</td>
